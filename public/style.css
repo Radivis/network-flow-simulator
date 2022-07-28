@@ -1,0 +1,13 @@
+.container {
+    position: relative;
+    display: block;
+    padding: 5px;
+    margin: 5px;
+    background: #eee;
+    border: 1px solid hsla(240,50%,50%, 0.2);
+    border-radius: 5px;
+}
+
+input[type="range"] {
+    width: 250px;
+}

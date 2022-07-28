@@ -4,7 +4,6 @@
 
 const express = require('express');
 const fs = require('fs');
-const formidable = require('formidable');
 const { response } = require('express');
 
 const server = express();
@@ -70,44 +69,6 @@ server.use(express.static('public', {
 server.use(express.json());
 
 // ROUTES
-
-server.post('/post', (req, res) => {
-    const form = formidable({
-
-    })
-
-    form.parse(req, (err, fields, files) => {
-        if (err) console.error(err);
-        else {
-            console.log(fields);
-
-            posts.push(fields.post);
-            console.log(posts);
-            res.json(posts);
-        }
-    })
-})
-
-server.post('/deletePost', (req, res) => {
-    let post = req.body.post;
-
-    if (posts.includes(post)) {
-        let postIndex = posts.indexOf(post);
-        posts.splice(postIndex, 1);
-        res.json({message: "Deleted!"})
-    } else {
-        res.json({message: "Not found!"})
-    }
-})
-
-// Should actually be a GET route, but is probably blocked by "static" above!
-server.get('/postarray', (req, res) => {
-    // DEBUG
-    console.log("Route GET /postarray hit!");
-    console.log({posts: posts});
-
-    res.json({posts: posts});
-})
 
 
 // Log errors

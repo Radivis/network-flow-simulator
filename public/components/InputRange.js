@@ -2,59 +2,65 @@
 
 import { createElement } from '../util/dom.js';
 
-import { clamp } from '../util/math';
+import { clamp } from '../util/math.js';
 
 const inputRange = ({
-    name: label,
+    name,
+    label,
     min = 0,
     max,
     defaultValue,
+    step,
     isInteger = false,
     parent
 } = {}) => {
-    const container = createElement({
+    const containerEl = createElement({
         classes: ['container'],
         parent
     });
 
-    const label = createElement({
+    const labelEl = createElement({
         type: 'label',
+        parent: containerEl,
         content: label,
         props: {
-            for: label
+            for: name
         }
     })
 
-    const field = createElement({
+    const fieldEl = createElement({
         type: 'input',
-        parent: container,
+        parent: containerEl,
         props: {
-            value: defaultValue
+            value: defaultValue,
+            name
         }
     });
-    if (isInteger) field.type = 'number'
+    if (isInteger) fieldEl.type = 'number'
 
-    const range = createElement({
+    const rangeEl = createElement({
         type: 'input',
-        parent: container,
+        parent: containerEl,
         props: {
-            value: defaultValue
+            value: defaultValue,
+            step
         }
     })
-    range.type = 'range'
-    range.min = min;
-    range.max = max;
+    rangeEl.type = 'range'
+    rangeEl.min = min;
+    rangeEl.max = max;
 
-    field.addEventListener('change', () => {
-        field.value = clamp(field.value, min, max);
-        range.value = field.value;
+    fieldEl.addEventListener('change', () => {
+        fieldEl.value = clamp(fieldEl.value, min, max);
+        rangeEl.value = fieldEl.value;
     })
 
-    range.addEventListener('input', () => {
-        field.value = range.value
+    rangeEl.addEventListener('input', () => {
+        fieldEl.value = rangeEl.value
     })
 
-    return container
+    // the fieldEl is returned, so that the value can be accessed easily
+    return fieldEl
 }
 
 export default inputRange;

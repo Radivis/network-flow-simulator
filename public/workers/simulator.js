@@ -5,7 +5,18 @@ import Node from '../model/Node.js'
 import Vertex from '../model/Vertex.js';
 import State from '../model/State.js'
 
+// DEBUG
+const log = str => {
+    self.postMessage({
+        status: 'debugging',
+        payload: `Worker: ${str}`
+    })
+}
+
+log("Worker created");
+
 self.onmessage = msg => {
+    log("Worker initiated");
     // Load config
     const { config } = msg.data;
     
