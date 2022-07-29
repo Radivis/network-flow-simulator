@@ -1,3 +1,14 @@
+html * {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+    font-size: 1em;
+    font-weight: bold;
+    padding: 4px;
+    margin: 5px;
+}
+
 .container {
     position: relative;
     display: block;
@@ -14,4 +25,11 @@ input[type="range"] {
 
 label::after {
     content: ': ';
+}
+
+.progress-background {
+    color: white;
+    background-color: black;
+    background-image: url('../img/blue-progress-transition-left-to-right.png');
+    background-repeat: no-repeat;
 }

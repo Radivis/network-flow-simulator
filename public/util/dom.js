@@ -5,6 +5,7 @@ export const createElement = ({
     parent,
     content,
     classes,
+    styles,
     props,
     prepend
 } = {}) => {
@@ -22,6 +23,12 @@ export const createElement = ({
 
     if (classes) {
         classes.forEach(className => element.classList.add(className));
+    }
+
+    if (styles) {
+        for (let key in styles) {
+            element.style[key] = styles[key];
+        }
     }
 
     for (let key in props) {

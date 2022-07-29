@@ -28,7 +28,7 @@ self.onmessage = msg => {
     let { amountOfNodes, amountOfTicks } = config;
 
     // DEBUG
-    self.log(JSON.stringify(msg.data))
+    // self.log(JSON.stringify(msg.data))
 
     // Explicit cast of config values
     amountOfNodes = Number(amountOfNodes)
@@ -68,7 +68,7 @@ self.onmessage = msg => {
             states.push(computeNextState(states[i]))
 
             // Status update
-            if (i % 100 == 0) {
+            if (i % 10 == 0) {
                 self.postMessage({
                     status: 'pending',
                     payload: i / amountOfTicks

@@ -3,6 +3,7 @@
 import { createElement } from '../util/dom.js';
 import inputRange from './inputRange.js';
 import configResource from './configResource.js';
+import runs from './runs.js';
 
 // Goes through a possibly nested object of HTML elements and returns a possibly nested object of their values 
 const mapElementsToValues = object => {
@@ -93,6 +94,11 @@ const config = (parent, simulationData) => {
             states: {}
         })
 
+         // DEBUG
+         console.log(simulationData);
+
+        const runElements = runs(parent, simulationData);
+
         for (let i = 0; i < config.amountOfRuns; i++) {
             // Workers need to have type: 'module', so that they can import the models
             const simulationWorker = new Worker('../workers/simulator.js', { type: 'module' });
@@ -101,12 +107,15 @@ const config = (parent, simulationData) => {
                 if (msg.data.status == 'complete') {
                     const states = msg.data.payload;
                     simulationData.runs[i].states = states
+                    simulationData.runs[i].progress = 1
+                    runElements[i].style.backgroundSize = `100% 100%`
+                    runElements[i].value = 1
                     console.log(states);
                     simulationWorker.terminate();
                 } else if (msg.data.status == 'pending') {
                     let progress = msg.data.payload;
                     simulationData.runs[i].progress = progress
-                    console.log(progress);
+                    runElements[i].style.backgroundSize = `${~~(progress*100)}% 100%`
                 } else if (msg.data.status == 'debugging') {
                     console.log(msg.data.payload);
                 }
