@@ -4,12 +4,6 @@ import { createElement } from '../util/dom.js';
 import inputRange from './inputRange.js';
 import configResource from './configResource.js';
 
-// DEBUG
-import Node from '../model/Node.js'
-import Vertex from '../model/Vertex.js';
-import State from '../model/State.js'
-import rules from '../rules/rules.js';
-
 // Goes through a possibly nested object of HTML elements and returns a possibly nested object of their values 
 const mapElementsToValues = object => {
     const array = Object.entries(object);
@@ -32,7 +26,7 @@ const mapElementsToValues = object => {
     return Object.fromEntries(valueArray)
 }
 
-const config = (parent) => {
+const config = (parent, simulationData) => {
     // Collect input fields in an object, so that they can be accessed more easily
     const inputElements = {}
 
@@ -92,63 +86,27 @@ const config = (parent) => {
         // Go through all input elements and extract their values
         const config = mapElementsToValues(inputElements);
 
-        // DEBUG
-
-        console.log("config sent to workers:");
-        console.log(config);
+        // Initialize simulationData object
+        simulationData.config = config;
+        simulationData.runs = [...new Array(+config.amountOfRuns)].fill({
+            progress: 0,
+            states: {}
+        })
 
         for (let i = 0; i < config.amountOfRuns; i++) {
-
-            // DEBUG BLOCK START
-            // const { amountOfNodes, amountOfTicks } = config;
-
-            // // Create nodes
-            // const nodes = [...new Array(Number(amountOfNodes))].map(() => new Node())
-
-            // // Create vertices
-            // const vertices = [];
-            // for (let i = 0; i < amountOfNodes; i++) {
-            //     for (let j = 0; j < amountOfNodes; j++) {
-            //         vertices.push(new Vertex(i, j))
-            //     }
-            // }
-
-            // // Create initial state
-            // const states = [new State(nodes, vertices)]
-
-            // const computeNextState = state => {
-            //     // Copy state to keep the old state unchanged
-            //     state = state.copy();
-
-            //     // Mutate the state by applying each rule in turn
-            //     for (let i = 0; i < rules.length; i++) {
-            //         const rule = rules[i];
-            //         state = rule(state, config)
-            //     }
-
-            //     return state;
-            // }
-
-            // const computeStates = () => {
-            //     for (let i = 0; i < amountOfTicks; i++) {
-            //         states.push(computeNextState(states[i]))
-            //     }
-            // }
-
-            // computeStates()
-
-            // DEBUG BLOCK END
-
-
             // Workers need to have type: 'module', so that they can import the models
             const simulationWorker = new Worker('../workers/simulator.js', { type: 'module' });
 
             simulationWorker.onmessage = msg => {
                 if (msg.data.status == 'complete') {
-                    console.log(msg.data);
+                    const states = msg.data.payload;
+                    simulationData.runs[i].states = states
+                    console.log(states);
                     simulationWorker.terminate();
                 } else if (msg.data.status == 'pending') {
-                    console.log(msg.data.payload);
+                    let progress = msg.data.payload;
+                    simulationData.runs[i].progress = progress
+                    console.log(progress);
                 } else if (msg.data.status == 'debugging') {
                     console.log(msg.data.payload);
                 }
@@ -160,12 +118,8 @@ const config = (parent) => {
                 config,
                 runIndex: i + 1
             })
-
-
         }
     })
-
-    return container
 }
 
 export default config;
