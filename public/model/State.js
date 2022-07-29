@@ -3,15 +3,23 @@
 'use strict';
 
 class State {
-    constructor(nodes, vertices) {
-        this.nodes = nodes;
-        this.vertices = vertices;
+    constructor(nodes, transactions) {
+        this.nodes = nodes
+
+        if (!transactions) this.transactions = []
+        else this.transactions = transactions
     }
 
-    copy() {
-        const newNodes = this.nodes.map(node => node.copy());
-        const newVertices = this.vertices.map(vertex => vertex.copy());
-        return new State(newNodes, newVertices)
+    // A state is mostly defined through its nodes
+    // Transactions rarely need to be copied, too
+    copy(isFullCopy) {
+        const newNodes = this.nodes.map(node => node.copy())
+
+        let newTransactions = []
+
+        if (isFullCopy) newTransactions = this.transactions.map(transaction => transaction.copy())
+        
+        return new State(newNodes, newTransactions)
     }
 }
 

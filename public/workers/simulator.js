@@ -29,16 +29,16 @@ self.onmessage = msg => {
         .map((nothing, index) => Number(config.resources[index].initialNodeStock));
     const nodes = [... new Array(amountOfNodes)].map(() => new Node(resources))
 
-    // Create vertices
-    const vertices = [];
-    for (let i = 0; i < amountOfNodes; i++) {
-        for (let j = 0; j < amountOfNodes; j++) {
-            vertices.push(new Vertex(i, j))
-        }
-    }
+    // Create vertices <- this approach is very inefficient, because this creates too many empty vertices
+    // const vertices = [];
+    // for (let i = 0; i < amountOfNodes; i++) {
+    //     for (let j = 0; j < amountOfNodes; j++) {
+    //         vertices.push(new Vertex(i, j))
+    //     }
+    // }
 
     // Create initial state
-    const states = [new State(nodes, vertices)]
+    const states = [new State(nodes)]
 
     const computeNextState = state => {
         // Copy state to keep the old state unchanged
@@ -47,7 +47,7 @@ self.onmessage = msg => {
         // Mutate the state by applying each rule in turn
         for (let i = 0; i < rules.length; i++) {
             const rule = rules[i];
-            state = rule(state, config)
+            rule(state, config)
         }
 
         return state;

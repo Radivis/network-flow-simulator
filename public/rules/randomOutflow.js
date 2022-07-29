@@ -6,30 +6,45 @@ This is the most important rule of all, because without this, nothing interestin
 'use strict';
 
 import Node from '../model/Node.js'
+import Transaction from '../model/Transaction.js';
 
 const randomOutflow = (state, config) => {
-    const { nodes, vertices } = state;
-    const { resources } = config; 
+    const { nodes, transactions } = state;
+    const { resources } = config;
 
     for (let i = 0; i < nodes.length; i++) {
         for (let j = 0; j < nodes.length; j++) {
-            const vertex = vertices
-            .filter(vertex => vertex.sourceIndex == i && vertex.targetIndex == j)
-
             // Node distance
             const d = Node.d(nodes[i], nodes[j])
 
+            debugger;
+
+            const transactionResources = [... new Array(config.resources.length)].fill(0)
+
+            let isTransactionHappening = false;
+
             for (let r = 0; r < resources.length; r++) {
                 let resource = resources[r]
-                let outflowProbability = resource.outflowProbability / d;
+                let outflowProbability = +resource.outflowProbability / d;
 
                 if (Math.random() < outflowProbability) {
-                    vertex.resources[r] = resource.outflowMean
-                }
+                    isTransactionHappening = true;
 
+                    const transactionValue = +config.resources[r].outflowMean;
+                    transactionResources[r] = transactionValue;
+                }
+            }
+
+            if (isTransactionHappening) {
+                state.transactions.push(new Transaction(i, j, transactionResources))
+
+                // Target gets resources
+                nodes[j].resources += transactionResources
+
+                // Source loses resources
+                nodes[i].resources -= transactionResources
             }
         }
-
     }
 }
 
