@@ -92,6 +92,9 @@ const config = (parent) => {
         // Go through all input elements and extract their values
         const config = mapElementsToValues(inputElements);
 
+        // DEBUG
+
+        console.log("config sent to workers:");
         console.log(config);
 
         for (let i = 0; i < config.amountOfRuns; i++) {

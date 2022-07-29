@@ -15,9 +15,6 @@ const log = str => {
 }
 
 self.onmessage = msg => {
-    // DEBUG
-    log(JSON.stringify(msg))
-
     // Load config
     const { config } = msg.data;
 
