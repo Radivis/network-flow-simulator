@@ -2,23 +2,33 @@
 
 // IMPORTS
 import Node from '../model/Node.js'
-import Vertex from '../model/Vertex.js';
 import State from '../model/State.js'
 import rules from '../rules/rules.js';
 
-// DEBUG
-const log = str => {
+self.log = value => {
+    let debugString = value;
+
+    if (!(typeof value == 'string')
+        && !(typeof value == 'number')
+        && !(typeof value == 'boolean')
+    ) {
+        debugString = JSON.stringify(value)
+    }
+
     self.postMessage({
         status: 'debugging',
-        payload: `Worker: ${str}`
+        payload: `Worker Debug Message: ${debugString}`
     })
 }
 
 self.onmessage = msg => {
     // Load config
-    const { config } = msg.data;
+    const { config, runIndex } = msg.data;
 
     let { amountOfNodes, amountOfTicks } = config;
+
+    // DEBUG
+    self.log(JSON.stringify(msg.data))
 
     // Explicit cast of config values
     amountOfNodes = Number(amountOfNodes)
@@ -47,7 +57,7 @@ self.onmessage = msg => {
         // Mutate the state by applying each rule in turn
         for (let i = 0; i < rules.length; i++) {
             const rule = rules[i];
-            rule(state, config)
+            rule(state, config, self)
         }
 
         return state;

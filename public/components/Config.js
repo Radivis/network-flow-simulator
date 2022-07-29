@@ -65,9 +65,9 @@ const config = (parent) => {
         name: 'amountOfTicks',
         label: 'Number of time steps (days) to compute',
         min: 1,
-        defaultValue: 1000,
-        max: 160000,
-        step: 365,
+        defaultValue: 360,
+        max: 7500,
+        step: 30,
         isInteger: true,
         parent: container
     })
@@ -156,7 +156,10 @@ const config = (parent) => {
 
             simulationWorker.onerror = console.error
 
-            simulationWorker.postMessage({ config })
+            simulationWorker.postMessage({
+                config,
+                runIndex: i + 1
+            })
 
 
         }

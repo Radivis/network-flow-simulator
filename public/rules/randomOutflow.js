@@ -8,41 +8,46 @@ This is the most important rule of all, because without this, nothing interestin
 import Node from '../model/Node.js'
 import Transaction from '../model/Transaction.js';
 
-const randomOutflow = (state, config) => {
+// Worker is passed for debugging purposes
+const randomOutflow = (state, config, worker) => {
     const { nodes, transactions } = state;
     const { resources } = config;
 
     for (let i = 0; i < nodes.length; i++) {
         for (let j = 0; j < nodes.length; j++) {
-            // Node distance
-            const d = Node.d(nodes[i], nodes[j])
+            if (i != j) {
 
-            debugger;
+                // Node distance
+                const d = Node.d(nodes[i], nodes[j])
 
-            const transactionResources = [... new Array(config.resources.length)].fill(0)
+                const transactionResources = [... new Array(resources.length)].fill(0)
 
-            let isTransactionHappening = false;
+                let isTransactionHappening = false;
 
-            for (let r = 0; r < resources.length; r++) {
-                let resource = resources[r]
-                let outflowProbability = +resource.outflowProbability / d;
+                for (let r = 0; r < resources.length; r++) {
+                    let resource = resources[r]
 
-                if (Math.random() < outflowProbability) {
-                    isTransactionHappening = true;
+                    let outflowProbability = +resource.outflowBaseProbability / d;
 
-                    const transactionValue = +config.resources[r].outflowMean;
-                    transactionResources[r] = transactionValue;
+                    if (Math.random() < outflowProbability) {
+                        isTransactionHappening = true;
+
+                        const transactionValue = +config.resources[r].outflowMean;
+                        transactionResources[r] = transactionValue;
+                    }
                 }
-            }
 
-            if (isTransactionHappening) {
-                state.transactions.push(new Transaction(i, j, transactionResources))
+                if (isTransactionHappening) {
+                    state.transactions.push(new Transaction(i, j, transactionResources))
 
-                // Target gets resources
-                nodes[j].resources += transactionResources
+                    for (let r = 0; r < resources.length; r++) {
+                        // Target gets resources
+                        nodes[j].resources[r] += transactionResources[r]
 
-                // Source loses resources
-                nodes[i].resources -= transactionResources
+                        // Source loses resources
+                        nodes[i].resources[r] -= transactionResources[r]
+                    }
+                }
             }
         }
     }

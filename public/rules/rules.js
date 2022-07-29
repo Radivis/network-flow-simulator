@@ -4,8 +4,8 @@
 
 import randomOutflow from "./randomOutflow.js";
 
-const rules = {
+const rules = [
     randomOutflow
-}
+]
 
 export default rules;
