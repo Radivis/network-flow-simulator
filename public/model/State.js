@@ -4,9 +4,14 @@
 
 class State {
     constructor(nodes, vertices) {
-        // Given nodes and vertices are copied, because a state needs to be immutable!
-        this.nodes = nodes.map(node => node.copy());
-        this.vertices = vertices.map(vertex => vertex.copy());
+        this.nodes = nodes;
+        this.vertices = vertices;
+    }
+
+    copy() {
+        const newNodes = this.nodes.map(node => node.copy());
+        const newVertices = this.vertices.map(vertex => vertex.copy());
+        return new State(newNodes, newVertices)
     }
 }
 

@@ -31,9 +31,9 @@ const inputText = ({
             name
         }
     });
-    if (isInteger) fieldEl.type = 'number'
 
-    return containerEl
+    // the fieldEl is returned, so that the value can be accessed easily
+    return fieldEl
 }
 
 export default inputText;

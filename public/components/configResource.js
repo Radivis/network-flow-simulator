@@ -2,6 +2,7 @@
 
 import { createElement } from '../util/dom.js';
 import inputRange from './inputRange.js';
+import inputText from './inputText.js';
 
 const configResource = (parent) => {
     // Collect input fields in an object, so that they can be accessed more easily
@@ -17,6 +18,23 @@ const configResource = (parent) => {
         parent: container,
         content: 'Resource Settings'
     });
+
+    inputElements.name = inputText({
+        name: 'name',
+        label: 'Name of Resource',
+        defaultValue: 'stuff',
+        parent: container
+    })
+
+    inputElements.initialNodeStock = inputRange({
+        name: 'initialNodeStock',
+        label: 'Node starts with',
+        min: 0,
+        defaultValue: 100,
+        max: 1000,
+        step: 4,
+        parent: container
+    })
 
     inputElements.outflowBaseProbability = inputRange({
         name: 'outflowBaseProbability',

@@ -11,8 +11,7 @@ class Vertex {
     }
 
     copy() {
-        return new Vertex(this.sourceIndex, this.targetIndex, this.resources)
-
+        return new Vertex(this.sourceIndex, this.targetIndex, [...this.resources])
     }
 }
 
