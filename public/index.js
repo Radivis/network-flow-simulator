@@ -2,17 +2,11 @@
 
 import { $ } from './util/dom.js';
 import config from './components/config.js';
-import simulation from './components/simulation.js';
+import simulations from './components/simulations.js';
 
 const elements = {};
 
-const renderSettings = (parent) => {
-    parent.append(config())
-}
-
-const renderSimulation = (parent) => {
-    parent.append(simulation())
-}
+const simulationsData = [];
 
 const domMapping = () => {
     elements.app = $('#app');
@@ -20,7 +14,7 @@ const domMapping = () => {
 
 const init = () => {
     domMapping();
-    renderSimulation(elements.app);
+    simulations(elements.app, simulationsData);
 }
 
 init();

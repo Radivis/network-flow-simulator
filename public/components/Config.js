@@ -4,8 +4,10 @@ import { createElement } from '../util/dom.js';
 import inputRange from './inputRange.js';
 import configResource from './configResource.js';
 import runs from './runs.js';
+import castNumberIfNumeric from '../util/string.js';
 
-// Goes through a possibly nested object of HTML elements and returns a possibly nested object of their values 
+// Goes through a possibly nested object of HTML elements and returns a possibly nested object of their values
+// Used to extract the values from the config form
 const mapElementsToValues = object => {
     const array = Object.entries(object);
 
@@ -20,7 +22,7 @@ const mapElementsToValues = object => {
             return [key, val.map(entry => mapElementsToValues(entry))]
         } else {
             // Otherwise the value is a HTML input element
-            return [key, val.value]
+            return [key, castNumberIfNumeric(val.value)]
         }
     })
 
@@ -31,14 +33,14 @@ const config = (parent, simulationData) => {
     // Collect input fields in an object, so that they can be accessed more easily
     const inputElements = {}
 
-    const container = createElement({
+    const containerEl = createElement({
         classes: ['container'],
         parent
     });
 
     const headerEl = createElement({
         type: 'h3',
-        parent: container,
+        parent: containerEl,
         content: 'Simulation Settings'
     });
 
@@ -49,12 +51,12 @@ const config = (parent, simulationData) => {
         defaultValue: 100,
         max: 1000,
         isInteger: true,
-        parent: container
+        parent: containerEl
     })
 
     inputElements.resources = [];
 
-    inputElements.resources.push(configResource(container));
+    inputElements.resources.push(configResource(containerEl));
 
     inputElements.amountOfTicks = inputRange({
         name: 'amountOfTicks',
@@ -64,7 +66,7 @@ const config = (parent, simulationData) => {
         max: 7500,
         step: 30,
         isInteger: true,
-        parent: container
+        parent: containerEl
     })
 
     inputElements.amountOfRuns = inputRange({
@@ -74,12 +76,12 @@ const config = (parent, simulationData) => {
         defaultValue: 4,
         max: 240,
         isInteger: true,
-        parent: container
+        parent: containerEl
     })
 
     const computeButtonEl = createElement({
         type: 'button',
-        parent: container,
+        parent: containerEl,
         content: 'Run Simulation'
     }
     )
@@ -89,19 +91,47 @@ const config = (parent, simulationData) => {
 
         // Initialize simulationData object
         simulationData.config = config;
-        simulationData.runs = [...new Array(+config.amountOfRuns)].fill({
+
+        const newRuns = [...new Array(+config.amountOfRuns)].fill({
             progress: 0,
             states: {}
         })
 
+        let amountOfPreviousRuns = 0;
+        if(simulationData.runs) {
+            amountOfPreviousRuns = simulationData.runs.length
+            simulationData.runs = [...simulationData.runs, ...newRuns]
+        } else {
+            simulationData.runs = newRuns;
+        }
+
          // DEBUG
          console.log(simulationData);
+         console.log("amountOfPreviousRuns");
+         console.log(amountOfPreviousRuns);
 
-        const runElements = runs(parent, simulationData);
+         const runsContainerEl = createElement({
+            parent: containerEl,
+            classes: ['container']
+         })
+         
+        const runElements = runs(runsContainerEl, simulationData, amountOfPreviousRuns);
 
-        for (let i = 0; i < config.amountOfRuns; i++) {
+        for (let i = amountOfPreviousRuns; i < (config.amountOfRuns + amountOfPreviousRuns); i++) {
             // Workers need to have type: 'module', so that they can import the models
             const simulationWorker = new Worker('../workers/simulator.js', { type: 'module' });
+
+
+            console.log("i");
+            console.log(i);
+            console.log("(config.amountOfRuns + amountOfPreviousRuns)");
+            console.log((config.amountOfRuns + amountOfPreviousRuns));
+            console.log("amountOfPreviousRuns");
+            console.log(amountOfPreviousRuns);
+            console.log("config.amountOfRuns");
+            console.log(config.amountOfRuns);
+            console.log("simulationData.runs[i]");
+            console.log(simulationData.runs[i]);
 
             simulationWorker.onmessage = msg => {
                 if (msg.data.status == 'complete') {
@@ -109,7 +139,6 @@ const config = (parent, simulationData) => {
                     simulationData.runs[i].states = states
                     simulationData.runs[i].progress = 1
                     runElements[i].style.backgroundSize = `100% 100%`
-                    runElements[i].value = 1
                     console.log(states);
                     simulationWorker.terminate();
                 } else if (msg.data.status == 'pending') {

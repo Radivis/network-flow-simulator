@@ -2,15 +2,13 @@
 
 import { createElement } from '../util/dom.js';
 
-const runs = (parent, simulationData) => {
-    const container = createElement({
-        classes: ['container'],
-        parent
-    });
+const runs = (parent, simulationData, amountOfPreviousRuns) => {
+    // clear
+    parent.innerHTML = '';
 
     const headerEl = createElement({
         type: 'h3',
-        parent: container,
+        parent: parent,
         content: 'Simulation Runs'
     });
 
@@ -18,27 +16,19 @@ const runs = (parent, simulationData) => {
 
     const { amountOfRuns } = simulationData.config
 
+    const { runs } = simulationData
+
     for (let i = 0; i < amountOfRuns; i++) {
         const runButtonEl = createElement({
             type: 'Button',
-            parent: container,
+            parent: parent,
             content: `Simulation run ${i}`,
             classes: ['progress-background'],
             styles: {
-                backgroundSize: '0% 100%'
+                backgroundSize: `${~~(runs[i].progress * 100)}% 100%`
             }
         })
         runElements.push(runButtonEl);
-
-        // const runProgressEl = createElement({
-        //     type: 'Progress',
-        //     parent: container,
-        //     props: {
-        //         max: 1,
-        //         value: 0
-        //     }
-        // })
-        // runElements.push(runProgressEl);
     }
 
     return runElements;

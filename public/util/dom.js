@@ -2,6 +2,7 @@
 
 export const createElement = ({
     type = 'div',
+    id,
     parent,
     content,
     classes,
@@ -10,6 +11,8 @@ export const createElement = ({
     prepend
 } = {}) => {
     const element = document.createElement(type);
+
+    if (id) element.id = id;
 
     if (parent) {
         if (prepend) {

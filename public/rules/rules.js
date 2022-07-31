@@ -1,4 +1,4 @@
-// Just collects all the rules into one object
+// Just collects all the rules into one array
 
 'use strict';
 
