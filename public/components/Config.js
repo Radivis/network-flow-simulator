@@ -69,8 +69,8 @@ const config = (parent, simulationData) => {
         parent: containerEl
     })
 
-    inputElements.amountOfRuns = inputRange({
-        name: 'amountOfRuns',
+    inputElements.amountOfNewRuns = inputRange({
+        name: 'amountOfNewRuns',
         label: 'Number of simulation runs',
         min: 1,
         defaultValue: 4,
@@ -83,8 +83,7 @@ const config = (parent, simulationData) => {
         type: 'button',
         parent: containerEl,
         content: 'Run Simulation'
-    }
-    )
+    })
     computeButtonEl.addEventListener('click', () => {
         // Go through all input elements and extract their values
         const config = mapElementsToValues(inputElements);
@@ -92,46 +91,42 @@ const config = (parent, simulationData) => {
         // Initialize simulationData object
         simulationData.config = config;
 
-        const newRuns = [...new Array(+config.amountOfRuns)].fill({
+        const newRuns = [...new Array(+config.amountOfNewRuns)].fill({
             progress: 0,
             states: {}
         })
 
         let amountOfPreviousRuns = 0;
+        let runsContainerEl;
         if(simulationData.runs) {
+            // Previous runs have been done
             amountOfPreviousRuns = simulationData.runs.length
             simulationData.runs = [...simulationData.runs, ...newRuns]
+
+            runsContainerEl = containerEl.querySelector(`#runs-container-${simulationData.id}`)
         } else {
+            // No previous run, initialization required
             simulationData.runs = newRuns;
+
+            runsContainerEl = createElement({
+                parent: containerEl,
+                classes: ['container'],
+                id: `runs-container-${simulationData.id}`
+             })
         }
+
+        // Update button label to indicate that extra runs can be simulated
+        computeButtonEl.innerHTML = 'Add Extra Simulation Runs'
 
          // DEBUG
          console.log(simulationData);
-         console.log("amountOfPreviousRuns");
-         console.log(amountOfPreviousRuns);
 
-         const runsContainerEl = createElement({
-            parent: containerEl,
-            classes: ['container']
-         })
-         
-        const runElements = runs(runsContainerEl, simulationData, amountOfPreviousRuns);
+         // render and get "Simulation run" buttons
+        const runElements = runs(runsContainerEl, simulationData);
 
-        for (let i = amountOfPreviousRuns; i < (config.amountOfRuns + amountOfPreviousRuns); i++) {
+        for (let i = amountOfPreviousRuns; i < (config.amountOfNewRuns + amountOfPreviousRuns); i++) {
             // Workers need to have type: 'module', so that they can import the models
             const simulationWorker = new Worker('../workers/simulator.js', { type: 'module' });
-
-
-            console.log("i");
-            console.log(i);
-            console.log("(config.amountOfRuns + amountOfPreviousRuns)");
-            console.log((config.amountOfRuns + amountOfPreviousRuns));
-            console.log("amountOfPreviousRuns");
-            console.log(amountOfPreviousRuns);
-            console.log("config.amountOfRuns");
-            console.log(config.amountOfRuns);
-            console.log("simulationData.runs[i]");
-            console.log(simulationData.runs[i]);
 
             simulationWorker.onmessage = msg => {
                 if (msg.data.status == 'complete') {

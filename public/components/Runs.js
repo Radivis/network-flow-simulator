@@ -2,7 +2,7 @@
 
 import { createElement } from '../util/dom.js';
 
-const runs = (parent, simulationData, amountOfPreviousRuns) => {
+const runs = (parent, simulationData) => {
     // clear
     parent.innerHTML = '';
 
@@ -14,11 +14,9 @@ const runs = (parent, simulationData, amountOfPreviousRuns) => {
 
     const runElements = [];
 
-    const { amountOfRuns } = simulationData.config
-
     const { runs } = simulationData
 
-    for (let i = 0; i < amountOfRuns; i++) {
+    for (let i = 0; i < runs.length; i++) {
         const runButtonEl = createElement({
             type: 'Button',
             parent: parent,
