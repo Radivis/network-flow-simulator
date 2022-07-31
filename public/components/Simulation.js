@@ -2,6 +2,7 @@
 
 import { createElement } from '../util/dom.js';
 import config from './config.js'
+import runsContainer from './runsContainer.js';
 
 const simulation = (parent, simulationData) => {
     const containerEl = createElement({
@@ -15,7 +16,17 @@ const simulation = (parent, simulationData) => {
         content: `Simulation ${simulationData.id}`
     });
 
-    config(containerEl, simulationData);
+    // #1: Config
+    const configInputElements = config(containerEl, simulationData);
+
+    // #2: Runs
+    const runsOuterContainerEl = createElement({
+        parent: containerEl,
+        classes: ['container'],
+        id: `runs-container-${simulationData.id}`
+     })
+
+     runsContainer(runsOuterContainerEl, simulationData, configInputElements)
 }
 
 export default simulation;
