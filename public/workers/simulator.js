@@ -23,7 +23,7 @@ self.log = value => {
 
 self.onmessage = msg => {
     // Load config
-    const { config, runIndex } = msg.data;
+    const { config } = msg.data;
 
     let { amountOfNodes, amountOfTicks } = config;
 

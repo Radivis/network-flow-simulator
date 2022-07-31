@@ -10,7 +10,8 @@ const run = (parent, runData, index) => {
         classes: ['progress-background'],
         styles: {
             backgroundSize: `${~~(runData.progress * 100)}% 100%`
-        }
+        },
+        id: `simulation-run-button-${index}`
     })
 
     return runButtonEl;

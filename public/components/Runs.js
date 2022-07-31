@@ -3,7 +3,7 @@
 import { createElement } from '../util/dom.js';
 import run from './run.js'
 
-const runs = (parent, simulationData) => {
+const runs = (parent, simulationData, renderVisualization) => {
     const { config, runs } = simulationData;
 
     const newRuns = [...new Array(+config.amountOfNewRuns)].fill({
@@ -38,9 +38,24 @@ const runs = (parent, simulationData) => {
 
     // Render new run elements
     for (let i = amountOfPreviousRuns; i < simulationData.runs.length; i++) {
-        const runButtonEl = run(runsContainerEl, simulationData.runs[i], i)
+        const runButtonEl = run(runsContainerEl, simulationData.runs[i], i, renderVisualization)
         runElements.push(runButtonEl)
     }
+
+    // Event listener for rendering Visualizations
+    runsContainerEl.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+
+        const target = ev.target
+
+        if (target.tagName === 'BUTTON') {
+            // Extract run id from target
+            const idParts = target.id.split('-')
+            const id = Number(idParts[idParts.length -1])
+    
+            renderVisualization(id)
+        }
+    })
 
     return runElements
 
