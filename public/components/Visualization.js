@@ -12,8 +12,7 @@ const visualization = (parent, runData) => {
 
     const runCanvas = new RunCanvas({
         parent,
-        width: '100%',
-        initialState: runData.states[0]
+        initialState: runData.states[1]
     })
 
     console.log(runData);

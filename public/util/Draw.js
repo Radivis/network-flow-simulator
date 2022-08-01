@@ -47,6 +47,7 @@ class Draw {
     x,
     y,
     size,
+    angle,
     color
   } = {}) {
     const cx = this.context;
@@ -58,13 +59,13 @@ class Draw {
     cx.beginPath();
   
     // Move to lower right corner B
-    cx.lineTo(size / 2, -size * Math.sqrt(3) / 6)
+    cx.lineTo(x + size / 2, y -size * Math.sqrt(3) / 6)
   
     // Move to top C
-    cx.lineTo(0, size * Math.sqrt(3) / 3);
+    cx.lineTo(x, y + size * Math.sqrt(3) / 3);
   
     // Move to botomm left A
-    cx.lineTo(-size / 2, -size * Math.sqrt(3) / 6);
+    cx.lineTo(x -size / 2, y -size * Math.sqrt(3) / 6);
   
     cx.closePath();
     cx.stroke();

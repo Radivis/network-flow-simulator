@@ -7,8 +7,8 @@ import Vertex from './Vertex.js';
 class Transaction extends Vertex {
     constructor(sourceIndex, targetIndex, resources) {
         super(sourceIndex, targetIndex);
-        // this.sourceIndex = sourceIndex;
-        // this.targetIndex = targetIndex;
+        this.sourceIndex = sourceIndex;
+        this.targetIndex = targetIndex;
 
         // Resources are modeled as an array of non-negative numbers
         if (!resources) this.resources = []
