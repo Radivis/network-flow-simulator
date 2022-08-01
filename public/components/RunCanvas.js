@@ -35,6 +35,10 @@ class RunCanvas {
         })
     }
 
+    clearCanvas() {
+        this.draw.clearCanvas()
+    }
+
     drawNode(node, isHighlighted) {
         let colors = [];
         if (isHighlighted) {
@@ -98,6 +102,8 @@ class RunCanvas {
 
     // renders a momentary state of a simulation run
     renderState(state) {
+        this.clearCanvas()
+
         for (let i=0; i < state.nodes.length; i++) {
             this.drawNode(this.state.nodes[i], this.selectedNodeIndex == i ? true : false)
         }
@@ -129,6 +135,9 @@ class RunCanvas {
             if ((dx**2 + dy **2) <= node.resources[0]) {
                 this.selectedNodeIndex = i;
                 this.drawNode(node, true)
+
+                // DEBUG
+                console.log(node);
 
                 // Get all transactions that involve this node
                 const nodeTransactions = state.transactions.filter(transaction => {
