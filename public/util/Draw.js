@@ -56,16 +56,23 @@ class Draw {
     cx.fillStyle = color;
   
     cx.save();
+
+    // move to center of triangle
+    cx.translate(x,y);
+
+    // rotate by angle (0 means triangle "points" downwards)
+    cx.rotate(angle);
+
     cx.beginPath();
   
     // Move to lower right corner B
-    cx.lineTo(x + size / 2, y -size * Math.sqrt(3) / 6)
+    cx.lineTo(size / 2, -size * Math.sqrt(3) / 6)
   
     // Move to top C
-    cx.lineTo(x, y + size * Math.sqrt(3) / 3);
+    cx.lineTo(0, size * Math.sqrt(3) / 3);
   
     // Move to botomm left A
-    cx.lineTo(x -size / 2, y -size * Math.sqrt(3) / 6);
+    cx.lineTo(-size / 2, -size * Math.sqrt(3) / 6);
   
     cx.closePath();
     cx.stroke();

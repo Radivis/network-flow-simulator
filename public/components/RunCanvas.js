@@ -45,6 +45,7 @@ class RunCanvas {
         sourceNode,
         targetNode
     } = {}) {
+        const arrowScalingFactor = 10
 
         const startX = sourceNode.x * this.width;
         const startY = sourceNode.y * this.height;
@@ -60,6 +61,9 @@ class RunCanvas {
             endY,
         })
 
+        // compute angle that the transaction arrow points to (0 is downwards)
+        const angle = -Math.atan((endX - startX) / (endY - startY))
+
         /*
         transaction arrows point towards the target and are close to it
         if r resources are involved, the line segment close to the
@@ -67,10 +71,12 @@ class RunCanvas {
         drawn at the segment boundaries
         */
 
+
         this.draw.centeredTriangle({
             x: (midX + endX) / 2,
             y: (midY + endY) / 2,
-            size: transaction.resources[0] * 10,
+            size: transaction.resources[0] * arrowScalingFactor,
+            angle,
             color: '#123'
         })
     }
