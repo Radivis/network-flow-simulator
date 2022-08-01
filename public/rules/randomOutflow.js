@@ -46,6 +46,10 @@ const randomOutflow = (state, config, worker) => {
 
                         // Source loses resources
                         nodes[i].resources[r] -= transactionResources[r]
+
+                        if (config.resources[r].existential && nodes[i].resources[r] <= 0) {
+                            nodes[i].isGoingToDie = true;
+                        }
                     }
                 }
             }

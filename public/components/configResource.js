@@ -1,6 +1,7 @@
 'use strict';
 
 import { createElement } from '../util/dom.js';
+import inputCheckbox from './inputCheckbox.js';
 import inputRange from './inputRange.js';
 import inputText from './inputText.js';
 
@@ -55,6 +56,18 @@ const configResource = (parent) => {
         step: 0.4,
         parent: container
     }).field
+
+    inputElements.existential = inputCheckbox({
+        name: 'existential',
+        label: 'Necessary for survival',
+        defaultValue: false,
+        parent: container
+    }).checkbox
+
+    // DEBUG
+    inputElements.existential.addEventListener('change', (ev) => {
+        console.log(inputElements.existential.checked);
+    })
 
     return inputElements
 }

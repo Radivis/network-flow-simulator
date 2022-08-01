@@ -3,9 +3,11 @@
 'use strict';
 
 import randomOutflow from "./randomOutflow.js";
+import death from "./death.js";
 
 const rules = [
-    randomOutflow
+    randomOutflow,
+    death
 ]
 
 export default rules;

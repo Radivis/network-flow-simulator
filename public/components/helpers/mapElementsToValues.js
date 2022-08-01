@@ -18,7 +18,12 @@ const mapElementsToValues = object => {
             return [key, val.map(entry => mapElementsToValues(entry))]
         } else {
             // Otherwise the value is a HTML input element
-            return [key, castNumberIfNumeric(val.value)]
+
+            let value = val.value
+            // The value of a checkbox is by default "on". Instead the "checked" property needs to be checked
+            if (val.type == 'checkbox') value = val.checked
+
+            return [key, castNumberIfNumeric(value)]
         }
     })
 

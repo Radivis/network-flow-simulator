@@ -1,14 +1,17 @@
 'use strict';
 
-const castNumberIfNumeric = str => {
+const castNumberIfNumeric = value => {
+    // pass booleans unchanged
+    if (typeof value === 'boolean') return value
+
     // handle special numbers
-    if (str === "NaN" || str === "Infinity" || str === "-Infinity") return Number(str)
+    if (value === "NaN" || value === "Infinity" || value === "-Infinity") return Number(value)
 
     // Check if the string actually represents a valid number
-    if (Number(str) != NaN) return Number(str) 
+    if (!isNaN(Number(value))) return Number(value) 
 
     // If the string can be interpreted as number, return it unchanged
-    return str
+    return value
 }
 
 export default castNumberIfNumeric;
