@@ -61,7 +61,7 @@ class RunCanvas {
         targetNode,
         isHighlighted
     } = {}) {
-        const arrowScalingFactor = 10
+        const arrowScalingFactor = 5
 
         const startX = sourceNode.x * this.width;
         const startY = sourceNode.y * this.height;
@@ -94,7 +94,7 @@ class RunCanvas {
         this.draw.centeredTriangle({
             x: (midX + endX) / 2,
             y: (midY + endY) / 2,
-            size: transaction.resources[0] * arrowScalingFactor,
+            size: Math.sqrt(transaction.resources[0]) * arrowScalingFactor,
             angle,
             color
         })
@@ -105,7 +105,7 @@ class RunCanvas {
         this.clearCanvas()
 
         for (let i=0; i < state.nodes.length; i++) {
-            this.drawNode(this.state.nodes[i], this.selectedNodeIndex == i ? true : false)
+            this.drawNode(state.nodes[i], this.selectedNodeIndex == i ? true : false)
         }
 
         for (let i=0; i < state.transactions.length; i++) {
@@ -137,7 +137,7 @@ class RunCanvas {
                 this.drawNode(node, true)
 
                 // DEBUG
-                console.log(node);
+                // console.log(node.resources[0]);
 
                 // Get all transactions that involve this node
                 const nodeTransactions = state.transactions.filter(transaction => {
