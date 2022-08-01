@@ -24,7 +24,7 @@ const configResource = (parent) => {
         label: 'Name of Resource',
         defaultValue: 'stuff',
         parent: container
-    })
+    }).field
 
     inputElements.initialNodeStock = inputRange({
         name: 'initialNodeStock',
@@ -34,7 +34,7 @@ const configResource = (parent) => {
         max: 1000,
         step: 4,
         parent: container
-    })
+    }).field
 
     inputElements.outflowBaseProbability = inputRange({
         name: 'outflowBaseProbability',
@@ -44,7 +44,7 @@ const configResource = (parent) => {
         max: 1,
         step: 0.004,
         parent: container
-    })
+    }).field
 
     inputElements.outflowMean = inputRange({
         name: 'outflowMean',
@@ -54,7 +54,7 @@ const configResource = (parent) => {
         max: 100,
         step: 0.4,
         parent: container
-    })
+    }).field
 
     return inputElements
 }

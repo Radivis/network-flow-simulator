@@ -8,23 +8,25 @@ const inputText = ({
     defaultValue,
     parent
 } = {}) => {
-    const containerEl = createElement({
+    const elements = {}
+
+    elements.container = createElement({
         classes: ['container'],
         parent
     });
 
-    const labelEl = createElement({
+    elements.label = createElement({
         type: 'label',
-        parent: containerEl,
+        parent: elements.container,
         content: label,
         props: {
             for: name,
         }
     })
 
-    const fieldEl = createElement({
+    elements.field = createElement({
         type: 'input',
-        parent: containerEl,
+        parent: elements.container,
         props: {
             type: 'text',
             value: defaultValue,
@@ -32,8 +34,7 @@ const inputText = ({
         }
     });
 
-    // the fieldEl is returned, so that the value can be accessed easily
-    return fieldEl
+    return elements
 }
 
 export default inputText;

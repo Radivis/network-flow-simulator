@@ -17,6 +17,11 @@ const visualization = (parent, runData) => {
         initialState: runData.states[1]
     })
 
+    elements.controlsContainer = createElement({
+        parent,
+        classes: ['container']
+    })
+
     console.log(runData);
 }
 

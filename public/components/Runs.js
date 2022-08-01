@@ -6,10 +6,23 @@ import run from './run.js'
 const runs = (parent, simulationData, renderVisualization) => {
     const { config, runs } = simulationData;
 
-    const newRuns = [...new Array(+config.amountOfNewRuns)].fill({
-        progress: 0,
-        states: {}
-    })
+    /*
+    The following doesn't work, because the object reference for each array entry is the same!
+    This means that changing one array element will change all others!
+    */
+
+    // const newRuns = [...new Array(+config.amountOfNewRuns)].fill({
+    //     progress: 0,
+    //     states: {}
+    // })
+
+    const newRuns = [];
+    for (let i = 0; i < +config.amountOfNewRuns; i++) {
+        newRuns.push({
+                progress: 0,
+                states: {}
+            })
+    }
 
     let runsContainerEl;
     let runElements = [];

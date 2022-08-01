@@ -27,7 +27,7 @@ const config = (parent, simulationData) => {
         max: 1000,
         isInteger: true,
         parent: containerEl
-    })
+    }).field
 
     inputElements.resources = [];
 
@@ -42,7 +42,7 @@ const config = (parent, simulationData) => {
         step: 30,
         isInteger: true,
         parent: containerEl
-    })
+    }).field
 
     inputElements.amountOfNewRuns = inputRange({
         name: 'amountOfNewRuns',
@@ -52,7 +52,7 @@ const config = (parent, simulationData) => {
         max: 240,
         isInteger: true,
         parent: containerEl
-    })
+    }).field
 
     return inputElements;
 }

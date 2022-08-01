@@ -14,53 +14,54 @@ const inputRange = ({
     isInteger = false,
     parent
 } = {}) => {
-    const containerEl = createElement({
+    const elements = {}
+
+    elements.container = createElement({
         classes: ['container'],
         parent
     });
 
-    const labelEl = createElement({
+    elements.label = createElement({
         type: 'label',
-        parent: containerEl,
+        parent: elements.container,
         content: label,
         props: {
             for: name
         }
     })
 
-    const fieldEl = createElement({
+    elements.field = createElement({
         type: 'input',
-        parent: containerEl,
+        parent: elements.container,
         props: {
             value: defaultValue,
             name
         }
     });
-    if (isInteger) fieldEl.type = 'number'
+    if (isInteger) elements.field.type = 'number'
 
-    const rangeEl = createElement({
+    elements.range = createElement({
         type: 'input',
-        parent: containerEl,
+        parent: elements.container,
         props: {
             value: defaultValue,
             step
         }
     })
-    rangeEl.type = 'range'
-    rangeEl.min = min;
-    rangeEl.max = max;
+    elements.range.type = 'range'
+    elements.range.min = min;
+    elements.range.max = max;
 
-    fieldEl.addEventListener('change', () => {
-        fieldEl.value = clamp(fieldEl.value, min, max);
-        rangeEl.value = fieldEl.value;
+    elements.field.addEventListener('change', () => {
+        elements.field.value = clamp(elements.field.value, min, max);
+        elements.range.value = elements.field.value;
     })
 
-    rangeEl.addEventListener('input', () => {
-        fieldEl.value = rangeEl.value
+    elements.range.addEventListener('input', () => {
+        elements.field.value = elements.range.value
     })
 
-    // the fieldEl is returned, so that the value can be accessed easily
-    return fieldEl
+    return elements
 }
 
 export default inputRange;
