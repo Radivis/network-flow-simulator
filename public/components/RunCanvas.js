@@ -4,6 +4,9 @@
 
 import { createElement } from '../util/dom.js';
 import Draw from '../util/Draw.js';
+import Debouncer from '../util/Debouncer.js';
+
+const debouncingDelay = 20
 
 class RunCanvas {
     constructor({
@@ -29,10 +32,17 @@ class RunCanvas {
         this.draw = new Draw(this.canvas);
 
         this.renderState(initialState)
-
-        this.canvas.addEventListener('mousemove', (ev) => {
-            this.selectNode(ev, this.state)
+        
+        this.debouncedSelectNode = new Debouncer({
+            func: this.selectNode.bind(this),
+            delay: debouncingDelay
         })
+
+        this.debouncedUnselectNode = new Debouncer({
+            func: this.unselectNode.bind(this),
+            delay: debouncingDelay
+        })
+
     }
 
     clearCanvas() {
@@ -104,9 +114,12 @@ class RunCanvas {
     renderState(state) {
         this.clearCanvas()
 
-        for (let i=0; i < state.nodes.length; i++) {
-            this.drawNode(state.nodes[i], this.selectedNodeIndex == i ? true : false)
-        }
+        // DEBUG
+        console.log('Rerendering canvas');
+
+        state.nodes.forEach((node, index) => {
+            this.drawNode(node, this.selectedNodeIndex == index ? true : false)
+        })
 
         for (let i=0; i < state.transactions.length; i++) {
             const currentTransaction = state.transactions[i]
@@ -116,6 +129,10 @@ class RunCanvas {
                 targetNode: state.nodes[currentTransaction.targetIndex],
             })
         }
+
+        this.canvas.addEventListener('mousemove', (ev) => {
+            this.debouncedSelectNode(ev, state)
+        })
     }
 
     // onmousemove event handler for selecting a node
@@ -152,14 +169,16 @@ class RunCanvas {
                         isHighlighted: true})
                 })
 
-                this.deselectNodeListener = this.canvas.addEventListener('mousemove', (ev) => {
-                    this.unselectNode(ev, node, nodeTransactions)
-                })
+                this.unselectNodeListener = (ev) => {
+                    this.debouncedUnselectNode(ev, node, nodeTransactions)
+                }
+
+                this.canvas.addEventListener('mousemove', this.unselectNodeListener)
             }
         }
     }
 
-    unselectNode(ev, node, nodeTransactions) {
+    unselectNode(ev, node) {
         const boundingClientRect = ev.target.getBoundingClientRect();
 
         const x = ev.clientX - boundingClientRect.left;
@@ -170,16 +189,9 @@ class RunCanvas {
 
         if ((dx**2 + dy **2) > node.resources[0]) {
             this.selectedNodeIndex = null;
-            this.drawNode(node, false)
-            nodeTransactions.forEach(transaction => {
-                this.drawTransaction({
-                    transaction,
-                    sourceNode: this.state.nodes[transaction.sourceIndex],
-                    targetNode: this.state.nodes[transaction.targetIndex],
-                    isHighlighted: false})
-                })
 
-            this.canvas.removeEventListener('mousemmove', this.deselectNodeListener)
+            this.canvas.removeEventListener('mousemove', this.unselectNodeListener)
+            this.renderState(this.state)
         }
     }
 }

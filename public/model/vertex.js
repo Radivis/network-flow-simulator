@@ -4,12 +4,12 @@
 
 class Vertex {
     constructor(sourceIndex, targetIndex, resources) {
-        this.sourceIndex = sourceIndex;
-        this.targetIndex = targetIndex;
+        this.sourceId = sourceIndex;
+        this.targetId = targetIndex;
     }
 
     copy() {
-        return new Vertex(this.sourceIndex, this.targetIndex)
+        return new Vertex(this.sourceId, this.targetId)
     }
 }
 

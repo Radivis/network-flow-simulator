@@ -3,7 +3,13 @@
 import { createInteger } from "../util/math.js";
 
 class Node {
-    constructor(resources, x, y, color) {
+    constructor({
+        resources,
+        x,
+        y,
+        color,
+        id
+    } = {}) {
         // Resources are modeled as an array of non-negative numbers
         if (!resources) this.resources = []
         else this.resources = resources
@@ -15,14 +21,18 @@ class Node {
 
         if (!color) this.color = `hsl(${createInteger(0, 360)}, ${50 + createInteger(0, 50)}%, ${25 + createInteger(0, 50)}%)`
         else this.color = color
+
+        if (id != undefined) this.id = id
     }
 
     copy() {
-        return new Node(
-            [...this.resources],
-            this.x,
-            this.y,
-            this.color
+        return new Node({
+            resources: [...this.resources],
+            x: this.x,
+            y: this.y,
+            color: this.color,
+            id: this.id
+        }
         );
     }
 

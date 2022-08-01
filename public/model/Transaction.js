@@ -5,10 +5,19 @@
 import Vertex from './Vertex.js';
 
 class Transaction extends Vertex {
-    constructor(sourceIndex, targetIndex, resources) {
-        super(sourceIndex, targetIndex);
+    constructor({
+        sourceIndex,
+        targetIndex,
+        sourceId,
+        targetId,
+        resources
+    } = {}) {
+        super(sourceId, targetId);
+
         this.sourceIndex = sourceIndex;
         this.targetIndex = targetIndex;
+        this.sourceId = sourceId;
+        this.targetId = targetId;
 
         // Resources are modeled as an array of non-negative numbers
         if (!resources) this.resources = []
@@ -16,7 +25,13 @@ class Transaction extends Vertex {
     }
 
     copy() {
-        return new Transaction(this.sourceIndex, this.targetIndex, [...this.resources])
+        return new Transaction({
+            sourceIndex: this.sourceIndex,
+            targetIndex: this.targetIndex,
+            sourceId: this.sourceId,
+            targetId: this.targetId,
+            resources: [...this.resources]
+        })
     }
 }
 

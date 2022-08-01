@@ -26,7 +26,9 @@ const visualization = (parent, runData) => {
     
     const setRenderedState = (ev) => {
         const stateIndex = +ev.target.value
-        elements.runCanvas.renderState(runData.states[stateIndex])
+        const state = runData.states[stateIndex]
+        elements.runCanvas.state = state
+        elements.runCanvas.renderState(state)
     }
 
     elements.stateInputRange = inputRange({

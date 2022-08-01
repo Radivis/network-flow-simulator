@@ -38,7 +38,11 @@ const randomOutflow = (state, config, worker) => {
                 }
 
                 if (isTransactionHappening) {
-                    state.transactions.push(new Transaction(i, j, transactionResources))
+                    state.transactions.push(new Transaction({
+                        sourceIndex: i,
+                        targetIndex: j,
+                        resources: transactionResources
+                    }))
 
                     for (let r = 0; r < resources.length; r++) {
                         // Target gets resources

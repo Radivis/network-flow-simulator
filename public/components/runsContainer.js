@@ -66,7 +66,8 @@ const runsContainer = (parent, simulationData, configInputElements, renderVisual
             simulationWorker.onerror = console.error
 
             simulationWorker.postMessage({
-                config: simulationData.config
+                config: simulationData.config,
+                runId: i
             })
         }
     })

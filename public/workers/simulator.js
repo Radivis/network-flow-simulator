@@ -17,13 +17,15 @@ self.log = value => {
 
     self.postMessage({
         status: 'debugging',
-        payload: `Worker Debug Message: ${debugString}`
+        payload: `Debug Message from Worker #${self.id}: ${debugString}`
     })
 }
 
 self.onmessage = msg => {
     // Load config
-    const { config } = msg.data;
+    const { config, runId } = msg.data;
+
+    self.id = runId;
 
     let { amountOfNodes, amountOfTicks } = config;
 
@@ -37,7 +39,12 @@ self.onmessage = msg => {
     // Create nodes
     const resources = [... new Array(config.resources.length)]
         .map((nothing, index) => Number(config.resources[index].initialNodeStock));
-    const nodes = [... new Array(amountOfNodes)].map(() => new Node(resources))
+    // const nodes = [... new Array(amountOfNodes)].map(() => new Node({resources}))
+
+    const nodes = []
+    for (let i = 0; i < amountOfNodes; i++) {
+        nodes.push(new Node({resources, id: i}))
+    }
 
     // Create vertices <- this approach is very inefficient, because this creates too many empty vertices
     // const vertices = [];
