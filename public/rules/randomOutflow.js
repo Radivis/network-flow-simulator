@@ -32,7 +32,11 @@ const randomOutflow = (state, config, worker) => {
                     if (Math.random() < outflowProbability) {
                         isTransactionHappening = true;
 
-                        const transactionValue = +config.resources[r].outflowMean;
+                        // A node can't give more than it has!
+                        const transactionValue = Math.min(
+                            config.resources[r].outflowMean,
+                            nodes[i].resources[r]
+                        );
                         transactionResources[r] = transactionValue;
                     }
                 }
@@ -51,8 +55,11 @@ const randomOutflow = (state, config, worker) => {
                         // Source loses resources
                         nodes[i].resources[r] -= transactionResources[r]
 
+                        // Nodes will die from deprivation of existential resources
                         if (config.resources[r].existential && nodes[i].resources[r] <= 0) {
+                            // Don't remove nodes immediately, since that would result in a loss of state data
                             nodes[i].isGoingToDie = true;
+                            worker.log(`RIP Node ${i}`);
                         }
                     }
                 }

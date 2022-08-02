@@ -21,6 +21,17 @@ class State {
         
         return new State(newNodes, newTransactions)
     }
+
+    // Returns a new state with the nodes removed that were flagged to die
+    next() {
+        const survivingNodes = this.nodes.filter(node => !node.isGoingToDie)
+
+        const newNodes = survivingNodes.map(node => node.copy())
+            
+        let newTransactions = []
+
+        return new State(newNodes, newTransactions)
+    }
 }
 
 export default State;

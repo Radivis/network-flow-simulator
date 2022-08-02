@@ -58,8 +58,8 @@ self.onmessage = msg => {
     const states = [new State(nodes)]
 
     const computeNextState = state => {
-        // Copy state to keep the old state unchanged
-        state = state.copy();
+        // Get a copy of the old state with the nodes removed that have died
+        state = state.next();
 
         // Mutate the state by applying each rule in turn
         for (let i = 0; i < rules.length; i++) {

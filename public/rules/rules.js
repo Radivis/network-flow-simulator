@@ -7,7 +7,6 @@ import death from "./death.js";
 
 const rules = [
     randomOutflow,
-    death
 ]
 
 export default rules;
