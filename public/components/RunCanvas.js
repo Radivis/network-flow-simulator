@@ -33,6 +33,8 @@ class RunCanvas {
         this.state = initialState;
         this.config = config;
 
+        this.areTransactionsVisible = true;
+
         this.draw = new Draw(this.canvas);
 
         this.renderState(initialState)
@@ -134,13 +136,15 @@ class RunCanvas {
             this.drawNode(node, this.selectedNodeIndex == index ? true : false)
         })
 
-        for (let i=0; i < state.transactions.length; i++) {
-            const currentTransaction = state.transactions[i]
-            this.drawTransaction({
-                transaction: currentTransaction,
-                sourceNode: state.nodes[currentTransaction.sourceIndex],
-                targetNode: state.nodes[currentTransaction.targetIndex],
-            })
+        if (this.areTransactionsVisible) {
+            for (let i=0; i < state.transactions.length; i++) {
+                const currentTransaction = state.transactions[i]
+                this.drawTransaction({
+                    transaction: currentTransaction,
+                    sourceNode: state.nodes[currentTransaction.sourceIndex],
+                    targetNode: state.nodes[currentTransaction.targetIndex],
+                })
+            }
         }
 
         this.canvas.addEventListener('mousemove', (ev) => {

@@ -63,7 +63,7 @@ const configResource = (parent) => {
         name: 'outflowMean',
         label: 'Median value of outflow as percentage of total resource',
         min: 0,
-        defaultValue: 1,
+        defaultValue: 10,
         max: 100,
         step: 0.4,
         parent: nonInputElements.container

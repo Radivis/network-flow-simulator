@@ -1,6 +1,7 @@
 'use strict';
 
 import { createElement } from "../util/dom.js";
+import inputCheckbox from "./inputCheckbox.js";
 import inputRange from "./inputRange.js";
 import RunCanvas from "./runCanvas.js";
 
@@ -16,7 +17,7 @@ const visualization = (parent, runData, configData) => {
     
     elements.runCanvas = new RunCanvas({
         parent,
-        initialState: runData.states[1],
+        initialState: runData.states[0],
         config: configData
     })
     
@@ -43,6 +44,17 @@ const visualization = (parent, runData, configData) => {
     })
     elements.stateInputRange.field.addEventListener('change', setRenderedState)
     elements.stateInputRange.range.addEventListener('input', setRenderedState)
+
+    elements.showTranactions = inputCheckbox({
+        name: 'showTranactions',
+        parent: elements.controlsContainer,
+        label: 'Show Tranactions',
+        defaultValue: true
+    })
+    elements.showTranactions.checkbox.addEventListener('change', () => {
+        elements.runCanvas.areTransactionsVisible = elements.showTranactions.checkbox.checked
+        elements.runCanvas.renderState(elements.runCanvas.state)
+    })
 
     console.log(runData);
 }
