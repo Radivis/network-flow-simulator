@@ -15,6 +15,8 @@ class RunCanvas {
         height = 800,
         initialState
     } = {}) {
+        this.parent = parent;
+
         this.canvas = createElement({
             type:'canvas',
             parent,
@@ -47,6 +49,14 @@ class RunCanvas {
 
     clearCanvas() {
         this.draw.clearCanvas()
+    }
+
+    // Currently doesn't work. After this method is called, the canvas stays blank!
+    removeAllEventListeners() {
+        // const newCanvas = this.canvas.cloneNode(true)
+        // this.parent.replaceChild(newCanvas, this.canvas)
+        // this.canvas = newCanvas;
+        // this.canvas = this.parent.querySelector('canvas')
     }
 
     drawNode(node, isHighlighted) {
@@ -112,10 +122,11 @@ class RunCanvas {
 
     // renders a momentary state of a simulation run
     renderState(state) {
+        this.removeAllEventListeners()
         this.clearCanvas()
 
         // DEBUG
-        console.log('Rerendering canvas');
+        console.log('Rendering canvas');
 
         state.nodes.forEach((node, index) => {
             this.drawNode(node, this.selectedNodeIndex == index ? true : false)
@@ -170,7 +181,7 @@ class RunCanvas {
                 })
 
                 this.unselectNodeListener = (ev) => {
-                    this.debouncedUnselectNode(ev, node, nodeTransactions)
+                    this.debouncedUnselectNode(ev, node)
                 }
 
                 this.canvas.addEventListener('mousemove', this.unselectNodeListener)

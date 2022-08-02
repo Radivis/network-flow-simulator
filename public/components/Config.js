@@ -2,7 +2,7 @@
 
 import { createElement } from '../util/dom.js';
 import inputRange from './inputRange.js';
-import configResource from './configResource.js';
+import configResourcesOuter from './configResourcesOuter.js';
 
 const config = (parent, simulationData) => {
     // Collect input fields in an object, so that they can be accessed more easily
@@ -29,9 +29,7 @@ const config = (parent, simulationData) => {
         parent: containerEl
     }).field
 
-    inputElements.resources = [];
-
-    inputElements.resources.push(configResource(containerEl));
+    inputElements.resources = configResourcesOuter(containerEl);
 
     inputElements.amountOfTicks = inputRange({
         name: 'amountOfTicks',
