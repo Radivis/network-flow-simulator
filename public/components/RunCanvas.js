@@ -13,7 +13,8 @@ class RunCanvas {
         parent,
         width = 800,
         height = 800,
-        initialState
+        initialState,
+        config
     } = {}) {
         this.parent = parent;
 
@@ -30,6 +31,7 @@ class RunCanvas {
         this.height = height;
 
         this.state = initialState;
+        this.config = config;
 
         this.draw = new Draw(this.canvas);
 
@@ -60,11 +62,11 @@ class RunCanvas {
     }
 
     drawNode(node, isHighlighted) {
-        let colors = [];
+        let colors = this.config.resources.map(resource => resource.color);
         if (isHighlighted) {
             colors = node.resources.map(value => '#0f0')
         } else {
-            colors = node.resources.map(value => '#000')
+            // colors = node.resources.map(value => '#000')
         }
 
         this.draw.polarDiagram({

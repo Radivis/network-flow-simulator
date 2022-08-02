@@ -5,7 +5,7 @@ import inputRange from "./inputRange.js";
 import RunCanvas from "./runCanvas.js";
 
 
-const visualization = (parent, runData) => {
+const visualization = (parent, runData, configData) => {
     const elements = {}
     
     elements.headerEl = createElement({
@@ -16,7 +16,8 @@ const visualization = (parent, runData) => {
     
     elements.runCanvas = new RunCanvas({
         parent,
-        initialState: runData.states[1]
+        initialState: runData.states[1],
+        config: configData
     })
     
     elements.controlsContainer = createElement({

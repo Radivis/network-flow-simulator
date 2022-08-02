@@ -120,7 +120,6 @@ class Draw {
     colors // array of colors, should have the same length as radii
   }) {
     const cx = this.context;
-
     const oldFillStyle = cx.fillStyle;
     
     const amountOfSegments = radii.length;
@@ -131,7 +130,8 @@ class Draw {
 
       cx.fillStyle = color;
       cx.beginPath();
-      cx.arc(x, y, radius, i * arcAngle, (i + 1) * arcAngle, true);
+      cx.moveTo(x,y);
+      cx.arc(x, y, radius, i * arcAngle, (i + 1) * arcAngle, false);
       cx.closePath();
       cx.fill();
     }

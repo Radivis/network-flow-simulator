@@ -48,7 +48,7 @@ const simulation = (parent, simulationData) => {
         }
         else {
             activeVisualizations.push(id)
-            visualization(visualizationsContainers.innerContainer, simulationData.runs[id])
+            visualization(visualizationsContainers.innerContainer, simulationData.runs[id], simulationData.config)
         }
 
         // clear visualizations container, if all runs are deactivated
