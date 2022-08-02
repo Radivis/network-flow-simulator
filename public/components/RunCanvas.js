@@ -113,15 +113,24 @@ class RunCanvas {
         target node is subdivided into r+1 segments and the triangles are
         drawn at the segment boundaries
         */
+        const boundariesX = [];
+        const boundariesY = [];
 
+        const amountOfResources = this.config.resources.length
 
-        this.draw.centeredTriangle({
-            x: (midX + endX) / 2,
-            y: (midY + endY) / 2,
-            size: Math.sqrt(transaction.resources[0]) * arrowScalingFactor,
-            angle,
-            color
-        })
+        for (let r = 0; r < amountOfResources; r++) {
+            boundariesX.push( midX + (endX - midX) * (r+1) / (amountOfResources + 1))
+            boundariesY.push( midY + (endY - midY) * (r+1) / (amountOfResources + 1))
+
+            this.draw.centeredTriangle({
+                x: boundariesX[r],
+                y: boundariesY[r],
+                size: Math.sqrt(transaction.resources[r]) * arrowScalingFactor,
+                angle,
+                color: this.config.resources[r].color
+            })
+        }
+
     }
 
     // renders a momentary state of a simulation run
