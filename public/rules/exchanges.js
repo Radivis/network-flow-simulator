@@ -48,37 +48,39 @@ const exchanges = (state, config, worker) => {
                 let isTransactionHappening = false;
 
                 for (let r = 0; r < resources.length; r++) {
+                    // The desire of node i to purchase resource r
+                    let purchaseDesire = Math.min(
+                        medians[r] / nodes[i].resources[r],
+                        maxDesire
+                    )
+
+                    // If node i is broke in resource r, purchaseDesire is NaN!
+                    if (isNaN(purchaseDesire)) purchaseDesire = maxDesire
+
                     for (let s = 0; s < resources.length; s++) {
                         // only exchanges of different resources make sense
                         if (r != s) {
+                            let exchangeProbability = 0;
 
-                            // The desire of node i to purchase resource r
-                            let purchaseDesire = Math.min(
-                                medians[r] / nodes[i].resources[r],
-                                maxDesire
-                            )
-
-                            if (isNaN(purchaseDesire)) purchaseDesire = maxDesire
-
-                            // The desire of node j to sell resource s
-                            let saleDesire = Math.min(
-                                nodes[j].resources[s] / medians[s],
-                                maxDesire
-                            )
-
-                            if (isNaN(saleDesire)) saleDesire = maxDesire
-
-                            // DEBUG
-                            // Somehow negative probabilities can arise. Some nodes must have negative resources for that to be possible!
-
-                            const exchangeProbability = purchaseDesire * saleDesire * resources[s].outflowBaseProbability / d
-
+                            // Check, if node j is broke in resource s
+                            if (nodes[j].resources[s] > 0) {
+                                // The desire of node j to sell resource s
+                                let saleDesire = Math.min(
+                                    nodes[j].resources[s] / medians[s],
+                                    maxDesire
+                                )
+    
+                                // If a majority of nodes are broke in resource s, saleDesire is NaN!
+                                if (isNaN(saleDesire)) saleDesire = maxDesire
+    
+                                // DEBUG
+                                // Somehow negative probabilities can arise. Some nodes must have negative resources for that to be possible!
+    
+                                exchangeProbability = purchaseDesire * saleDesire * resources[s].outflowBaseProbability / d
+                            }
 
                             if (Math.random() < exchangeProbability) {
                                 isTransactionHappening = true;
-
-                                worker.log("exchangeProbability")
-                                worker.log(exchangeProbability)
 
                                 // How much r does i purchase from j?
                                 const purchaseValue = Math.min(
@@ -104,9 +106,6 @@ const exchanges = (state, config, worker) => {
                         targetIndex: j,
                         resources: transactionResources
                     }))
-
-                    worker.log("transactionResources")
-                    worker.log(transactionResources)
 
                     for (let r = 0; r < resources.length; r++) {
                         // Target gets resources
