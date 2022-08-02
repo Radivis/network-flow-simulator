@@ -3,6 +3,7 @@
 import { createElement } from '../util/dom.js';
 import inputRange from './inputRange.js';
 import configResourcesOuter from './configResourcesOuter.js';
+import configRules from './configRules.js';
 
 const config = (parent, simulationData) => {
     // Collect input fields in an object, so that they can be accessed more easily
@@ -28,6 +29,8 @@ const config = (parent, simulationData) => {
         isInteger: true,
         parent: containerEl
     }).field
+
+    inputElements.rules = configRules(containerEl)
 
     inputElements.resources = configResourcesOuter(containerEl);
 

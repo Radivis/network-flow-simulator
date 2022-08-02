@@ -18,7 +18,7 @@ import { median } from '../util/math.js'
 const maxDesire = 10;
 
 // Worker is passed for debugging purposes
-const randomExchange = (state, config, worker) => {
+const exchanges = (state, config, worker) => {
     const { nodes } = state;
     const { resources } = config;
 
@@ -33,6 +33,7 @@ const randomExchange = (state, config, worker) => {
     }
 
     // DEBUG
+    worker.log("Resource medians:")
     worker.log(medians)
 
     for (let i = 0; i < nodes.length; i++) {
@@ -47,7 +48,7 @@ const randomExchange = (state, config, worker) => {
                 let isTransactionHappening = false;
 
                 for (let r = 0; r < resources.length; r++) {
-                    for (let s = 0; s < resources[r].length; s++) {
+                    for (let s = 0; s < resources.length; s++) {
                         // only exchanges of different resources make sense
                         if (r != s) {
 
@@ -60,12 +61,24 @@ const randomExchange = (state, config, worker) => {
                             if (isNaN(purchaseDesire)) purchaseDesire = maxDesire
 
                             // The desire of node j to sell resource s
-                            const saleDesire = nodes[j].resources[s] / medians[s]
+                            let saleDesire = Math.min(
+                                nodes[j].resources[s] / medians[s],
+                                maxDesire
+                            )
+
+                            if (isNaN(saleDesire)) saleDesire = maxDesire
+
+                            // DEBUG
+                            // Somehow negative probabilities can arise. Some nodes must have negative resources for that to be possible!
 
                             const exchangeProbability = purchaseDesire * saleDesire * resources[s].outflowBaseProbability / d
 
+
                             if (Math.random() < exchangeProbability) {
                                 isTransactionHappening = true;
+
+                                worker.log("exchangeProbability")
+                                worker.log(exchangeProbability)
 
                                 // How much r does i purchase from j?
                                 const purchaseValue = Math.min(
@@ -82,28 +95,31 @@ const randomExchange = (state, config, worker) => {
                                 transactionResources[s] = saleValue;
                             }
                         }
+                    }
+                }
 
-                        if (isTransactionHappening) {
-                            state.transactions.push(new Transaction({
-                                sourceIndex: i,
-                                targetIndex: j,
-                                resources: transactionResources
-                            }))
+                if (isTransactionHappening) {
+                    state.transactions.push(new Transaction({
+                        sourceIndex: i,
+                        targetIndex: j,
+                        resources: transactionResources
+                    }))
 
-                            for (let r = 0; r < resources.length; r++) {
-                                // Target gets resources
-                                nodes[j].resources[r] += transactionResources[r]
+                    worker.log("transactionResources")
+                    worker.log(transactionResources)
 
-                                // Source loses resources
-                                nodes[i].resources[r] -= transactionResources[r]
+                    for (let r = 0; r < resources.length; r++) {
+                        // Target gets resources
+                        nodes[j].resources[r] += transactionResources[r]
 
-                                // Nodes will die from deprivation of existential resources
-                                if (config.resources[r].existential && nodes[i].resources[r] <= 0) {
-                                    // Don't remove nodes immediately, since that would result in a loss of state data
-                                    nodes[i].isGoingToDie = true;
-                                    worker.log(`RIP Node ${i}`);
-                                }
-                            }
+                        // Source loses resources
+                        nodes[i].resources[r] -= transactionResources[r]
+
+                        // Nodes will die from deprivation of existential resources
+                        if (config.resources[r].existential && nodes[i].resources[r] <= 0) {
+                            // Don't remove nodes immediately, since that would result in a loss of state data
+                            nodes[i].isGoingToDie = true;
+                            worker.log(`RIP Node ${i}`);
                         }
                     }
                 }
@@ -112,4 +128,4 @@ const randomExchange = (state, config, worker) => {
     }
 }
 
-export default randomExchange;
+export default exchanges;

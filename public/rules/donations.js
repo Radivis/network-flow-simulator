@@ -8,7 +8,7 @@ import Node from '../model/Node.js'
 import Transaction from '../model/Transaction.js';
 
 // Worker is passed for debugging purposes
-const randomDonation = (state, config, worker) => {
+const donations = (state, config, worker) => {
     const { nodes } = state;
     const { resources } = config;
 
@@ -67,4 +67,4 @@ const randomDonation = (state, config, worker) => {
     }
 }
 
-export default randomDonation;
+export default donations;

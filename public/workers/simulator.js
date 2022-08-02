@@ -61,9 +61,11 @@ self.onmessage = msg => {
         // Get a copy of the old state with the nodes removed that have died
         state = state.next();
 
+        const activeRules = rules(config)
+
         // Mutate the state by applying each rule in turn
-        for (let i = 0; i < rules.length; i++) {
-            const rule = rules[i];
+        for (let i = 0; i < activeRules.length; i++) {
+            const rule = activeRules[i];
             rule(state, config, self)
         }
 
