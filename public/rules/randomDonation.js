@@ -1,6 +1,5 @@
 /*
-This rule determines the behavior of a node to start a resource transfert to another node.
-This is the most important rule of all, because without this, nothing interesting happens!
+This rule determines the behavior of a node to start a unilateral resource transfer to another node.
 */
 
 'use strict';
@@ -9,8 +8,8 @@ import Node from '../model/Node.js'
 import Transaction from '../model/Transaction.js';
 
 // Worker is passed for debugging purposes
-const randomOutflow = (state, config, worker) => {
-    const { nodes, transactions } = state;
+const randomDonation = (state, config, worker) => {
+    const { nodes } = state;
     const { resources } = config;
 
     for (let i = 0; i < nodes.length; i++) {
@@ -68,4 +67,4 @@ const randomOutflow = (state, config, worker) => {
     }
 }
 
-export default randomOutflow;
+export default randomDonation;

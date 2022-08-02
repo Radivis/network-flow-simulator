@@ -2,11 +2,13 @@
 
 'use strict';
 
-import randomOutflow from "./randomOutflow.js";
+import randomDonation from "./randomDonation.js";
+import randomExchange from "./randomExchange.js";
 import death from "./death.js";
 
 const rules = [
-    randomOutflow,
+    randomDonation,
+    randomExchange
 ]
 
 export default rules;
