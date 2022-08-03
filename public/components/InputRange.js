@@ -14,54 +14,61 @@ const inputRange = ({
     isInteger = false,
     parent
 } = {}) => {
-    const elements = {}
+    // Contains elements and callbacks!
+    const expo = {}
 
-    elements.container = createElement({
+    expo.container = createElement({
         classes: ['container'],
         parent
     });
 
-    elements.label = createElement({
+    expo.label = createElement({
         type: 'label',
-        parent: elements.container,
+        parent: expo.container,
         content: label,
         props: {
             for: name
         }
     })
 
-    elements.field = createElement({
+    expo.field = createElement({
         type: 'input',
-        parent: elements.container,
+        parent: expo.container,
         props: {
             value: defaultValue,
             name
         }
     });
-    if (isInteger) elements.field.type = 'number'
+    if (isInteger) expo.field.type = 'number'
 
-    elements.range = createElement({
+    expo.range = createElement({
         type: 'input',
-        parent: elements.container,
+        parent: expo.container,
         props: {
             value: defaultValue,
             step
         }
     })
-    elements.range.type = 'range'
-    elements.range.min = min;
-    elements.range.max = max;
+    expo.range.type = 'range'
+    expo.range.min = min;
+    expo.range.max = max;
 
-    elements.field.addEventListener('change', () => {
-        elements.field.value = clamp(elements.field.value, min, max);
-        elements.range.value = elements.field.value;
+    expo.field.addEventListener('change', () => {
+        expo.field.value = clamp(expo.field.value, min, max);
+        expo.range.value = expo.field.value;
     })
 
-    elements.range.addEventListener('input', () => {
-        elements.field.value = elements.range.value
+    expo.range.addEventListener('input', () => {
+        expo.field.value = expo.range.value
     })
 
-    return elements
+    expo.setValue = val => {
+        val = clamp(val, min, max)
+        expo.field.value = val;
+        expo.range.value = val;
+    }
+
+    return expo
 }
 
 export default inputRange;

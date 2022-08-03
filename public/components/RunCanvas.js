@@ -14,13 +14,15 @@ class RunCanvas {
         parent,
         width = 800,
         height = 800,
-        initialState,
-        config
+        initialStateIndex = 0,
+        config,
+        runData,
+        setStateIndexCallback
     } = {}) {
         this.parent = parent;
 
         this.canvas = createElement({
-            type:'canvas',
+            type: 'canvas',
             parent,
             props: {
                 width,
@@ -30,16 +32,16 @@ class RunCanvas {
 
         this.width = width;
         this.height = height;
-
-        this.state = initialState;
+        this.stateIndex = initialStateIndex;
         this.config = config;
+        this.runData = runData;
+        this.setStateIndexCallback = setStateIndexCallback;
 
         this.areTransactionsVisible = true;
 
         this.draw = new Draw(this.canvas);
 
-        this.renderState(initialState)
-        
+        // debounce event handlers
         this.debouncedSelectNode = new Debouncer({
             func: this.selectNode.bind(this),
             delay: debouncingDelay
@@ -50,11 +52,43 @@ class RunCanvas {
             delay: debouncingDelay
         })
 
+        // this binding for methods that are used as callbacks
+        this.animateRun = this.animateRun.bind(this)
+        this.stopRunAnimation = this.stopRunAnimation.bind(this)
+        this.setStateIndex = this.setStateIndex.bind(this)
+
+        // initialize canvas
+        this.setStateIndex(initialStateIndex)
+    }
+
+    animateRun({
+        frameDuration = 100,
+        reversed = false
+    } = {}) {
+
+        this.animation = setInterval(() => {
+            // DEBUG
+            console.log("Callback fired");
+
+            if ((!reversed) && this.stateIndex < this.runData.states.length - 1) {
+                this.setStateIndex(this.stateIndex + 1)
+            } else if (reversed && this.stateIndex > 0) {
+                this.setStateIndex(this.stateIndex - 1)
+            } else {
+                this.stopRunAnimation()
+            }
+        }
+            , frameDuration)
+    }
+
+    stopRunAnimation() {
+        clearInterval(this.animation)
     }
 
     clearCanvas() {
         this.draw.clearCanvas()
     }
+
 
     // Currently doesn't work. After this method is called, the canvas stays blank!
     removeAllEventListeners() {
@@ -120,8 +154,8 @@ class RunCanvas {
         const amountOfResources = this.config.resources.length
 
         for (let r = 0; r < amountOfResources; r++) {
-            boundariesX.push( midX + (endX - midX) * (r+1) / (amountOfResources + 1))
-            boundariesY.push( midY + (endY - midY) * (r+1) / (amountOfResources + 1))
+            boundariesX.push(midX + (endX - midX) * (r + 1) / (amountOfResources + 1))
+            boundariesY.push(midY + (endY - midY) * (r + 1) / (amountOfResources + 1))
 
             this.draw.centeredTriangle({
                 x: boundariesX[r],
@@ -147,7 +181,7 @@ class RunCanvas {
         })
 
         if (this.areTransactionsVisible) {
-            for (let i=0; i < state.transactions.length; i++) {
+            for (let i = 0; i < state.transactions.length; i++) {
                 // Note that at this stage, the transaction is a raw object without methods
                 const currentTransaction = new Transaction(state.transactions[i])
 
@@ -178,7 +212,7 @@ class RunCanvas {
             const dy = y - node.y * this.height;
 
             // the squared distance is compared to the squared radius
-            if ((dx**2 + dy **2) <= node.resources[0]) {
+            if ((dx ** 2 + dy ** 2) <= node.resources[0]) {
                 this.selectedNodeIndex = i;
                 this.drawNode(node, true)
 
@@ -195,7 +229,8 @@ class RunCanvas {
                         transaction,
                         sourceNode: state.nodes[transaction.sourceIndex],
                         targetNode: state.nodes[transaction.targetIndex],
-                        isHighlighted: true})
+                        isHighlighted: true
+                    })
                 })
 
                 this.unselectNodeListener = (ev) => {
@@ -207,6 +242,14 @@ class RunCanvas {
         }
     }
 
+    setStateIndex(index) {
+        this.stateIndex = index
+        this.renderState(this.runData.states[this.stateIndex])
+
+        // Notify external elements to update
+        if (this.setStateIndexCallback) this.setStateIndexCallback(index)
+    }
+
     unselectNode(ev, node) {
         const boundingClientRect = ev.target.getBoundingClientRect();
 
@@ -216,11 +259,11 @@ class RunCanvas {
         const dx = x - node.x * this.width;
         const dy = y - node.y * this.height;
 
-        if ((dx**2 + dy **2) > node.resources[0]) {
+        if ((dx ** 2 + dy ** 2) > node.resources[0]) {
             this.selectedNodeIndex = null;
 
             this.canvas.removeEventListener('mousemove', this.unselectNodeListener)
-            this.renderState(this.state)
+            this.renderState(this.runData.states[this.stateIndex])
         }
     }
 }

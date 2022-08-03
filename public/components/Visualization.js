@@ -17,8 +17,8 @@ const visualization = (parent, runData, configData) => {
     
     elements.runCanvas = new RunCanvas({
         parent,
-        initialState: runData.states[0],
-        config: configData
+        config: configData,
+        runData: runData,
     })
     
     elements.controlsContainer = createElement({
@@ -26,11 +26,8 @@ const visualization = (parent, runData, configData) => {
         classes: ['container']
     })
     
-    const setRenderedState = (ev) => {
-        const stateIndex = +ev.target.value
-        const state = runData.states[stateIndex]
-        elements.runCanvas.state = state
-        elements.runCanvas.renderState(state)
+    const setStateIndex = (ev) => {
+        elements.runCanvas.setStateIndex(+ev.target.value)
     }
 
     elements.stateInputRange = inputRange({
@@ -42,17 +39,45 @@ const visualization = (parent, runData, configData) => {
         isInteger: true,
         parent: elements.controlsContainer
     })
-    elements.stateInputRange.field.addEventListener('change', setRenderedState)
-    elements.stateInputRange.range.addEventListener('input', setRenderedState)
+    elements.stateInputRange.field.addEventListener('change', setStateIndex)
+    elements.stateInputRange.range.addEventListener('input', setStateIndex)
 
-    elements.showTranactions = inputCheckbox({
-        name: 'showTranactions',
+    elements.runCanvas.setStateIndexCallback = elements.stateInputRange.setValue
+
+    elements.animationControls = createElement({
+        parent: elements.controlsContainer
+    })
+
+    elements.animationReverseButton = createElement({
+        type: 'button',
+        parent: elements.animationControls,
+        content: 'reverse animation'
+    })
+    elements.animationReverseButton.addEventListener('click', () => elements.runCanvas.animateRun({reversed: true}))
+
+    elements.animationPauseButton = createElement({
+        type: 'button',
+        parent: elements.animationControls,
+        content: 'pause animation'
+    })
+    elements.animationPauseButton.addEventListener('click', elements.runCanvas.stopRunAnimation)
+
+    elements.animationPlayButton = createElement({
+        type: 'button',
+        parent: elements.animationControls,
+        content: 'play animation'
+    })
+    elements.animationPlayButton.addEventListener('click', elements.runCanvas.animateRun)
+
+
+    elements.showTransactions = inputCheckbox({
+        name: 'showTransactions',
         parent: elements.controlsContainer,
-        label: 'Show Tranactions',
+        label: 'Show Transactions',
         defaultValue: true
     })
-    elements.showTranactions.checkbox.addEventListener('change', () => {
-        elements.runCanvas.areTransactionsVisible = elements.showTranactions.checkbox.checked
+    elements.showTransactions.checkbox.addEventListener('change', () => {
+        elements.runCanvas.areTransactionsVisible = elements.showTransactions.checkbox.checked
         elements.runCanvas.renderState(elements.runCanvas.state)
     })
 
