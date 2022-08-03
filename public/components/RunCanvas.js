@@ -5,6 +5,7 @@
 import { createElement } from '../util/dom.js';
 import Draw from '../util/Draw.js';
 import Debouncer from '../util/Debouncer.js';
+import Transaction from '../model/Transaction.js';
 
 const debouncingDelay = 20
 
@@ -147,11 +148,13 @@ class RunCanvas {
 
         if (this.areTransactionsVisible) {
             for (let i=0; i < state.transactions.length; i++) {
-                const currentTransaction = state.transactions[i]
+                // Note that at this stage, the transaction is a raw object without methods
+                const currentTransaction = new Transaction(state.transactions[i])
+
                 this.drawTransaction({
                     transaction: currentTransaction,
-                    sourceNode: state.nodes[currentTransaction.sourceIndex],
-                    targetNode: state.nodes[currentTransaction.targetIndex],
+                    sourceNode: currentTransaction.getSourceNode(state.nodes),
+                    targetNode: currentTransaction.getTargetNode(state.nodes),
                 })
             }
         }

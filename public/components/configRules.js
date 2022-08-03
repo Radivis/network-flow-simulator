@@ -2,6 +2,7 @@
 
 import { createElement } from '../util/dom.js';
 import inputCheckbox from './inputCheckbox.js';
+import inputRange from './inputRange.js';
 
 const configRules = (parent) => {
     // Collect input fields in a separate object, so that they can be accessed more easily
@@ -29,6 +30,13 @@ const configRules = (parent) => {
     inputElements.exchanges = inputCheckbox({
         name: 'exchanges',
         label: 'Simulate exchanges (trade)',
+        defaultValue: true,
+        parent: nonInputElements.container
+    }).checkbox
+
+    inputElements.inheritance = inputCheckbox({
+        name: 'inheritance',
+        label: 'Simulate inheritance (after death of a node)',
         defaultValue: true,
         parent: nonInputElements.container
     }).checkbox

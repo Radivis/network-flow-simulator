@@ -42,6 +42,25 @@ class Node {
         const dy = node1.y - node2.y;
         return Math.sqrt(dx * dx + dy * dy)
     }
+
+    // Static method to get a node by id from a collection of nodes
+    static getNodeById(collection, id) {
+        switch (collection.constructor) {
+            case Array:
+                for (let i = 0; i < collection.length; i++) {
+                    if (collection[i].id === id) {
+                        return collection[i];
+                    }
+                }
+                break;
+            case Object:
+                return this.getNodeById(Object.values(collection), id)
+                break;
+
+            default:
+                break;
+        }
+    }
 }
 
 export default Node;

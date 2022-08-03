@@ -70,7 +70,7 @@ const exchanges = (state, config, worker) => {
                 for (let r = 0; r < resources.length; r++) {
                     for (let s = 0; s < resources.length; s++) {
                         // only exchanges of different resources make sense
-                        if (r < s) {
+                        if (r != s) {
                             let exchangeProbability = 0;
 
                             let exchangeDesire = purchaseDesires[i][r] * saleDesires[j][s]
@@ -109,26 +109,13 @@ const exchanges = (state, config, worker) => {
                 }
 
                 if (isTransactionHappening) {
-                    state.transactions.push(new Transaction({
+                    const transaction = new Transaction({
                         sourceIndex: i,
                         targetIndex: j,
                         resources: transactionResources
-                    }))
-
-                    for (let r = 0; r < resources.length; r++) {
-                        // Target gets resources
-                        nodes[j].resources[r] += transactionResources[r]
-
-                        // Source loses resources
-                        nodes[i].resources[r] -= transactionResources[r]
-
-                        // Nodes will die from deprivation of existential resources
-                        if (config.resources[r].existential && nodes[i].resources[r] <= 0) {
-                            // Don't remove nodes immediately, since that would result in a loss of state data
-                            nodes[i].isGoingToDie = true;
-                            worker.log(`RIP Node ${i}`);
-                        }
-                    }
+                    })
+                    state.transactions.push(transaction)
+                    transaction.execute(nodes, config)
                 }
             }
         }

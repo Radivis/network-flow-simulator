@@ -2,10 +2,12 @@
 
 'use strict';
 
+import inheritance from "./inheritance.js";
 import donations from "./donations.js";
 import exchanges from "./exchanges.js";
 
 const availableRules = {
+    inheritance,
     donations,
     exchanges
 }

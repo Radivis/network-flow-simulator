@@ -89,6 +89,8 @@ self.onmessage = msg => {
             status: 'complete',
             payload: states
         })
+
+        // Note: The payload seems to be transmitted as raw data wihout the methods on the object instances!
     }
 
     computeStates()

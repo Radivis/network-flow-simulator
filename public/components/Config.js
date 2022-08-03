@@ -8,15 +8,16 @@ import configRules from './configRules.js';
 const config = (parent, simulationData) => {
     // Collect input fields in an object, so that they can be accessed more easily
     const inputElements = {}
+    const nonInputElements = {}
 
-    const containerEl = createElement({
+    nonInputElements.container = createElement({
         classes: ['container'],
         parent
     });
 
-    const headerEl = createElement({
+    nonInputElements.header = createElement({
         type: 'h3',
-        parent: containerEl,
+        parent: nonInputElements.container,
         content: 'Simulation Settings'
     });
 
@@ -27,12 +28,23 @@ const config = (parent, simulationData) => {
         defaultValue: 100,
         max: 1000,
         isInteger: true,
-        parent: containerEl
+        parent: nonInputElements.container
     }).field
 
-    inputElements.rules = configRules(containerEl)
+    inputElements.rules = configRules(nonInputElements.container)
 
-    inputElements.resources = configResourcesOuter(containerEl);
+    inputElements.amountOfNeighborsInheriting = inputRange({
+        name: 'amountOfNeighborsInheriting',
+        label: 'After death resources get distributed among the nearest n neighbors',
+        min: 1,
+        max: 100,
+        defaultValue: 3,
+        step: 1,
+        isInteger: true,
+        parent: nonInputElements.container
+    }).field
+
+    inputElements.resources = configResourcesOuter(nonInputElements.container);
 
     inputElements.amountOfTicks = inputRange({
         name: 'amountOfTicks',
@@ -42,7 +54,7 @@ const config = (parent, simulationData) => {
         max: 7500,
         step: 30,
         isInteger: true,
-        parent: containerEl
+        parent: nonInputElements.container
     }).field
 
     inputElements.amountOfNewRuns = inputRange({
@@ -52,7 +64,7 @@ const config = (parent, simulationData) => {
         defaultValue: 4,
         max: 240,
         isInteger: true,
-        parent: containerEl
+        parent: nonInputElements.container
     }).field
 
     return inputElements;

@@ -3,13 +3,26 @@
 'use strict';
 
 class Vertex {
-    constructor(sourceIndex, targetIndex, resources) {
-        this.sourceId = sourceIndex;
-        this.targetId = targetIndex;
+    constructor({
+        sourceIndex,
+        targetIndex,
+        sourceId,
+        targetId,
+    } = {}) {
+        this.sourceIndex = sourceIndex;
+        this.targetIndex = targetIndex;
+        this.sourceId = sourceId;
+        this.targetId = targetId;
     }
 
     copy() {
-        return new Vertex(this.sourceId, this.targetId)
+        return new Vertex({
+            sourceIndex: this.sourceIndex,
+            targetIndex: this.targetIndex,
+            sourceId: this.sourceId,
+            targetId: this.targetId
+        }
+        )
     }
 }
 
