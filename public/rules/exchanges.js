@@ -12,9 +12,10 @@ more of them than the median.
 
 import Node from '../model/Node.js'
 import Transaction from '../model/Transaction.js';
-import { median } from '../util/math.js'
+import { clamp, median } from '../util/math.js'
 
 // CONSTANTS
+const minDesire = 0.1
 const maxDesire = 10;
 
 // Worker is passed for debugging purposes
@@ -32,13 +33,32 @@ const exchanges = (state, config, worker) => {
         medians.push(median(resourceValues))
     }
 
-    // DEBUG
-    worker.log("Resource medians:")
-    worker.log(medians)
+    // compute relative welaths and transaction desires of each node
+    const relativeWealths = [];
+    const purchaseDesires = [];
+    const saleDesires = [];
+    for (let i = 0; i < nodes.length; i++) {
+        relativeWealths[i] = []
+        purchaseDesires[i] = []
+        saleDesires[i] = []
+        for (let r = 0; r < resources.length; r++) {
+            const relativeWealth = nodes[i].resources[r] / medians[r]
+
+            let saleDesire = clamp(relativeWealth, minDesire, maxDesire)
+            // NaN needs to be treated separately, because it can't be compared to other numbers
+            if (isNaN(saleDesire)) saleDesire = maxDesire
+
+            const purchaseDesire = 1 / saleDesire
+
+            relativeWealths[i].push(relativeWealth)
+            saleDesires[i].push(saleDesire)
+            purchaseDesires[i].push(purchaseDesire)
+        }
+    }
 
     for (let i = 0; i < nodes.length; i++) {
         for (let j = 0; j < nodes.length; j++) {
-            if (i != j) {
+            if (i < j) {
 
                 // Node distance
                 const d = Node.d(nodes[i], nodes[j])
@@ -48,52 +68,40 @@ const exchanges = (state, config, worker) => {
                 let isTransactionHappening = false;
 
                 for (let r = 0; r < resources.length; r++) {
-                    // The desire of node i to purchase resource r
-                    let purchaseDesire = Math.min(
-                        medians[r] / nodes[i].resources[r],
-                        maxDesire
-                    )
-
-                    // If node i is broke in resource r, purchaseDesire is NaN!
-                    if (isNaN(purchaseDesire)) purchaseDesire = maxDesire
-
                     for (let s = 0; s < resources.length; s++) {
                         // only exchanges of different resources make sense
-                        if (r != s) {
+                        if (r < s) {
                             let exchangeProbability = 0;
 
-                            // Check, if node j is broke in resource s
-                            if (nodes[j].resources[s] > 0) {
-                                // The desire of node j to sell resource s
-                                let saleDesire = Math.min(
-                                    nodes[j].resources[s] / medians[s],
-                                    maxDesire
-                                )
-    
-                                // If a majority of nodes are broke in resource s, saleDesire is NaN!
-                                if (isNaN(saleDesire)) saleDesire = maxDesire
-    
-                                // DEBUG
-                                // Somehow negative probabilities can arise. Some nodes must have negative resources for that to be possible!
-    
-                                exchangeProbability = purchaseDesire * saleDesire * resources[s].outflowBaseProbability / d
+                            let exchangeDesire = purchaseDesires[i][r] * saleDesires[j][s]
+
+                            // the desires are good to know, but i needs to have s and j needs to have r in sufficient quantities
+                            if (nodes[i].resources[s] > 0 && nodes[j].resources[r] > 0) {
+                                exchangeProbability = exchangeDesire
+                                    * resources[r].purchaseBaseProbability
+                                    * resources[s].saleBaseProbability
+                                    / d
                             }
 
                             if (Math.random() < exchangeProbability) {
                                 isTransactionHappening = true;
 
+                                // How much is exchanged?
+                                // If j is poor in r, or i is poor in s, the fraction will be reduced
+                                const exchangeFraction = Math.min(
+                                    nodes[j].resources[r] / resources[r].outflowMean,
+                                    nodes[i].resources[s] / resources[s].outflowMean,
+                                    1
+                                )
+
                                 // How much r does i purchase from j?
-                                const purchaseValue = Math.min(
-                                    config.resources[r].outflowMean,
-                                    nodes[j].resources[r]
-                                );
+                                const purchaseValue = resources[r].outflowMean * exchangeFraction
+
+                                // Since resource r flows from j to i, the direction is reversed
                                 transactionResources[r] = -purchaseValue;
 
                                 // How much s dies i sell to j?
-                                const saleValue = Math.min(
-                                    config.resources[s].outflowMean,
-                                    nodes[i].resources[s]
-                                );
+                                const saleValue = resources[s].outflowMean * exchangeFraction
                                 transactionResources[s] = saleValue;
                             }
                         }
@@ -126,5 +134,6 @@ const exchanges = (state, config, worker) => {
         }
     }
 }
+
 
 export default exchanges;

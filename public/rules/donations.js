@@ -26,9 +26,9 @@ const donations = (state, config, worker) => {
                 for (let r = 0; r < resources.length; r++) {
                     let resource = resources[r]
 
-                    let outflowProbability = +resource.outflowBaseProbability / d;
+                    let donationProbability = +resource.donationBaseProbability / d;
 
-                    if (Math.random() < outflowProbability) {
+                    if (Math.random() < donationProbability) {
                         isTransactionHappening = true;
 
                         // A node can't give more than it has!

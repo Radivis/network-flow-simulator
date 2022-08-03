@@ -49,11 +49,31 @@ const configResource = (parent) => {
         parent: nonInputElements.container
     }).field
 
-    inputElements.outflowBaseProbability = inputRange({
-        name: 'outflowBaseProbability',
-        label: 'Base probability of outflow',
+    inputElements.donationBaseProbability = inputRange({
+        name: 'donationBaseProbability',
+        label: 'Base probability of donation',
         min: 0,
         defaultValue: 0.01,
+        max: 1,
+        step: 0.004,
+        parent: nonInputElements.container
+    }).field
+
+    inputElements.saleBaseProbability = inputRange({
+        name: 'saleBaseProbability',
+        label: 'Base sale probability of this resource',
+        min: 0,
+        defaultValue: 0.03,
+        max: 1,
+        step: 0.004,
+        parent: nonInputElements.container
+    }).field
+
+    inputElements.purchaseBaseProbability = inputRange({
+        name: 'purchaseBaseProbability',
+        label: 'Base purchase probability of this resource',
+        min: 0,
+        defaultValue: 0.03,
         max: 1,
         step: 0.004,
         parent: nonInputElements.container
