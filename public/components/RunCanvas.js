@@ -8,6 +8,7 @@ import Debouncer from '../util/Debouncer.js';
 import Transaction from '../model/Transaction.js';
 
 const debouncingDelay = 20
+const defaultFrameDuration = 100
 
 class RunCanvas {
     constructor({
@@ -37,9 +38,13 @@ class RunCanvas {
         this.runData = runData;
         this.setStateIndexCallback = setStateIndexCallback;
 
+        // defaults and stuff
         this.areTransactionsVisible = true;
 
         this.draw = new Draw(this.canvas);
+
+        this.frameDuration = defaultFrameDuration
+        this.isAnimationReversed = false
 
         // debounce event handlers
         this.debouncedSelectNode = new Debouncer({
@@ -56,34 +61,35 @@ class RunCanvas {
         this.animateRun = this.animateRun.bind(this)
         this.stopRunAnimation = this.stopRunAnimation.bind(this)
         this.setStateIndex = this.setStateIndex.bind(this)
+        this.setFrameDuration = this.setFrameDuration.bind(this)
 
         // initialize canvas
         this.setStateIndex(initialStateIndex)
     }
 
-    animateRun({
-        frameDuration = 100,
-        reversed = false
-    } = {}) {
+    // ANIMATION STUFF
+    animateRun() {
+        this.stopRunAnimation()
 
         this.animation = setInterval(() => {
-            // DEBUG
-            console.log("Callback fired");
-
-            if ((!reversed) && this.stateIndex < this.runData.states.length - 1) {
+            if ((!this.isAnimationReversed)
+                && this.stateIndex < this.runData.states.length - 1) {
                 this.setStateIndex(this.stateIndex + 1)
-            } else if (reversed && this.stateIndex > 0) {
+            } else if (this.isAnimationReversed
+                && this.stateIndex > 0) {
                 this.setStateIndex(this.stateIndex - 1)
             } else {
                 this.stopRunAnimation()
             }
         }
-            , frameDuration)
+            , this.frameDuration)
     }
 
     stopRunAnimation() {
         clearInterval(this.animation)
     }
+
+    // RENDERING STUFF
 
     clearCanvas() {
         this.draw.clearCanvas()
@@ -200,6 +206,8 @@ class RunCanvas {
         })
     }
 
+    // EVENT HANDLERS
+
     // onmousemove event handler for selecting a node
     selectNode(ev, state) {
         const boundingClientRect = ev.target.getBoundingClientRect();
@@ -244,13 +252,6 @@ class RunCanvas {
         }
     }
 
-    setStateIndex(index) {
-        this.stateIndex = index
-        this.renderState(this.runData.states[this.stateIndex])
-
-        // Notify external elements to update
-        if (this.setStateIndexCallback) this.setStateIndexCallback(index)
-    }
 
     unselectNode(ev, node) {
         const boundingClientRect = ev.target.getBoundingClientRect();
@@ -268,6 +269,25 @@ class RunCanvas {
             this.renderState(this.runData.states[this.stateIndex])
         }
     }
+
+    // GETTERS & SETTERS
+
+    setStateIndex(index) {
+        this.stateIndex = index
+        this.renderState(this.runData.states[this.stateIndex])
+
+        // Notify external elements to update
+        if (this.setStateIndexCallback) this.setStateIndexCallback(index)
+    }
+
+    setFrameDuration(duration) {
+        // DEBUG
+        console.log("Set frame duration called with duration " + duration);
+
+        this.frameDuration = duration
+        if (this.animation) this.animateRun()
+    }
+
 }
 
 export default RunCanvas;

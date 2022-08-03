@@ -25,10 +25,18 @@ const visualization = (parent, runData, configData) => {
         parent,
         classes: ['container']
     })
+
+    // CALLBACKS
     
     const setStateIndex = (ev) => {
         elements.runCanvas.setStateIndex(+ev.target.value)
     }
+
+    const setFrameDuration = (ev) => {
+        elements.runCanvas.setFrameDuration(+ev.target.value)
+    }
+
+    // GO ON WITH OTHER ELEMENTS
 
     elements.stateInputRange = inputRange({
         label: 'State at time step',
@@ -53,7 +61,10 @@ const visualization = (parent, runData, configData) => {
         parent: elements.animationControls,
         content: 'reverse animation'
     })
-    elements.animationReverseButton.addEventListener('click', () => elements.runCanvas.animateRun({reversed: true}))
+    elements.animationReverseButton.addEventListener('click', () =>{
+        elements.runCanvas.isAnimationReversed = true
+        elements.runCanvas.animateRun()
+    })
 
     elements.animationPauseButton = createElement({
         type: 'button',
@@ -67,7 +78,10 @@ const visualization = (parent, runData, configData) => {
         parent: elements.animationControls,
         content: 'play animation'
     })
-    elements.animationPlayButton.addEventListener('click', elements.runCanvas.animateRun)
+    elements.animationPlayButton.addEventListener('click', () =>{
+        elements.runCanvas.isAnimationReversed = false
+        elements.runCanvas.animateRun()
+    })
 
 
     elements.showTransactions = inputCheckbox({
@@ -80,6 +94,18 @@ const visualization = (parent, runData, configData) => {
         elements.runCanvas.areTransactionsVisible = elements.showTransactions.checkbox.checked
         elements.runCanvas.renderState()
     })
+
+    elements.frameDurationInputRange = inputRange({
+        label: 'Milliseconds a frame is shown during animation',
+        min: 10,
+        max: 2500,
+        defaultValue: 100,
+        step: 10,
+        isInteger: true,
+        parent: elements.controlsContainer
+    })
+    elements.frameDurationInputRange.field.addEventListener('change', setFrameDuration)
+    elements.frameDurationInputRange.range.addEventListener('input', setFrameDuration)
 
     console.log(runData);
 }
