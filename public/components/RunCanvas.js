@@ -154,22 +154,44 @@ class RunCanvas {
         target node is subdivided into r+1 segments and the triangles are
         drawn at the segment boundaries
         */
-        const boundariesX = [];
-        const boundariesY = [];
+        const targetSegmentBoundariesX = [];
+        const targetSegmentBoundariesY = [];
+
+        /*
+        negative amount transactions (see exchanges) point
+        towards the source and are close to it.
+        The direction of the arrows are reversed.
+        Otherwise the same logic as for positive transactions applies
+        */
+        const sourceSegmentBoundariesX = [];
+        const sourceSegmentBoundariesY = [];
 
         const amountOfResources = this.config.resources.length
 
         for (let r = 0; r < amountOfResources; r++) {
-            boundariesX.push(midX + (endX - midX) * (r + 1) / (amountOfResources + 1))
-            boundariesY.push(midY + (endY - midY) * (r + 1) / (amountOfResources + 1))
+            targetSegmentBoundariesX.push(midX + (endX - midX) * (r + 1) / (amountOfResources + 1))
+            targetSegmentBoundariesY.push(midY + (endY - midY) * (r + 1) / (amountOfResources + 1))
+            sourceSegmentBoundariesX.push(midX + (startX - midX) * (r + 1) / (amountOfResources + 1))
+            sourceSegmentBoundariesY.push(midY + (startY - midY) * (r + 1) / (amountOfResources + 1))
+            
+            if (transaction.resources[r] > 0) {
+                this.draw.centeredTriangle({
+                    x: targetSegmentBoundariesX[r],
+                    y: targetSegmentBoundariesY[r],
+                    size: Math.sqrt(transaction.resources[r]) * arrowScalingFactor,
+                    angle,
+                    color: this.config.resources[r].color
+                })
+            } else {
+                this.draw.centeredTriangle({
+                    x: sourceSegmentBoundariesX[r],
+                    y: sourceSegmentBoundariesY[r],
+                    size: Math.sqrt(-transaction.resources[r]) * arrowScalingFactor,
+                    angle: angle + Math.PI,
+                    color: this.config.resources[r].color
+                })
+            }
 
-            this.draw.centeredTriangle({
-                x: boundariesX[r],
-                y: boundariesY[r],
-                size: Math.sqrt(transaction.resources[r]) * arrowScalingFactor,
-                angle,
-                color: this.config.resources[r].color
-            })
         }
 
     }
@@ -226,9 +248,6 @@ class RunCanvas {
                 this.selectedNodeIndex = i;
                 this.drawNode(node, true)
 
-                // DEBUG
-                // console.log(node.resources[0]);
-
                 // Get all transactions that involve this node
                 const nodeTransactions = state.transactions.filter(transaction => {
                     return transaction.sourceIndex == i || transaction.targetIndex == i
@@ -281,9 +300,6 @@ class RunCanvas {
     }
 
     setFrameDuration(duration) {
-        // DEBUG
-        console.log("Set frame duration called with duration " + duration);
-
         this.frameDuration = duration
         if (this.animation) this.animateRun()
     }
