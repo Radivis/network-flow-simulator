@@ -79,11 +79,6 @@ self.onmessage = msg => {
 
     const nodes = []
     for (let i = 0; i < amountOfNodes; i++) {
-        // DEBUG
-        if (i % 50 == 0) {
-            self.log(`Looking for free space for node ${i}`)
-        }
-
         const {x, y} = getFreeCoordinates({nodes})
         nodes.push(new Node({x, y, resources, id: i}))
     }

@@ -12,8 +12,7 @@ more of them than the median.
 
 import Node from '../model/Node.js'
 import Transaction from '../model/Transaction.js';
-import { clamp, median } from '../util/math.js'
-
+import { clamp, median, selectRandomElements } from '../util/math.js'
 // CONSTANTS
 const minDesire = 0.1
 const maxDesire = 10;
@@ -57,66 +56,69 @@ const exchanges = (state, config, worker) => {
     }
 
     for (let i = 0; i < nodes.length; i++) {
-        for (let j = 0; j < nodes.length; j++) {
-            if (i < j) {
+        const nodesWithoutI = [...nodes.slice(0, i), ...nodes.slice(i + 1)]
+        const partners = selectRandomElements(nodesWithoutI, config.maxAmountOfExchanges)
 
-                // Node distance
-                const d = Node.d(nodes[i], nodes[j])
+        for (let p = 0; p < partners.length; p++) {
+            // Get index of partner in nodes array
+            const j = nodes.indexOf(partners[p])
 
-                const transactionResources = [... new Array(resources.length)].fill(0)
+            // Node distance
+            const d = Node.d(nodes[i], partners[p])
 
-                let isTransactionHappening = false;
+            const transactionResources = [... new Array(resources.length)].fill(0)
 
-                for (let r = 0; r < resources.length; r++) {
-                    for (let s = 0; s < resources.length; s++) {
-                        // only exchanges of different resources make sense
-                        if (r != s) {
-                            let exchangeProbability = 0;
+            let isTransactionHappening = false;
 
-                            let exchangeDesire = purchaseDesires[i][r] * saleDesires[j][s]
+            for (let r = 0; r < resources.length; r++) {
+                for (let s = 0; s < resources.length; s++) {
+                    // only exchanges of different resources make sense
+                    if (r != s) {
+                        let exchangeProbability = 0;
 
-                            // the desires are good to know, but i needs to have s and j needs to have r in sufficient quantities
-                            if (nodes[i].resources[s] > 0 && nodes[j].resources[r] > 0) {
-                                exchangeProbability = exchangeDesire
-                                    * resources[r].purchaseBaseProbability
-                                    * resources[s].saleBaseProbability
-                                    / d
-                            }
+                        let exchangeDesire = purchaseDesires[i][r] * saleDesires[j][s]
 
-                            if (Math.random() < exchangeProbability) {
-                                isTransactionHappening = true;
+                        // the desires are good to know, but i needs to have s and j needs to have r in sufficient quantities
+                        if (nodes[i].resources[s] > 0 && nodes[j].resources[r] > 0) {
+                            exchangeProbability = exchangeDesire
+                                * resources[r].purchaseBaseProbability
+                                * resources[s].saleBaseProbability
+                                / d
+                        }
 
-                                // How much is exchanged?
-                                // If j is poor in r, or i is poor in s, the fraction will be reduced
-                                const exchangeFraction = Math.min(
-                                    nodes[j].resources[r] / resources[r].outflowMean,
-                                    nodes[i].resources[s] / resources[s].outflowMean,
-                                    1
-                                )
+                        if (Math.random() < exchangeProbability) {
+                            isTransactionHappening = true;
 
-                                // How much r does i purchase from j?
-                                const purchaseValue = resources[r].outflowMean * exchangeFraction
+                            // How much is exchanged?
+                            // If j is poor in r, or i is poor in s, the fraction will be reduced
+                            const exchangeFraction = Math.min(
+                                nodes[j].resources[r] / resources[r].outflowMean,
+                                nodes[i].resources[s] / resources[s].outflowMean,
+                                1
+                            )
 
-                                // Since resource r flows from j to i, the direction is reversed
-                                transactionResources[r] = -purchaseValue;
+                            // How much r does i purchase from j?
+                            const purchaseValue = resources[r].outflowMean * exchangeFraction
 
-                                // How much s dies i sell to j?
-                                const saleValue = resources[s].outflowMean * exchangeFraction
-                                transactionResources[s] = saleValue;
-                            }
+                            // Since resource r flows from j to i, the direction is reversed
+                            transactionResources[r] = -purchaseValue;
+
+                            // How much s dies i sell to j?
+                            const saleValue = resources[s].outflowMean * exchangeFraction
+                            transactionResources[s] = saleValue;
                         }
                     }
                 }
+            }
 
-                if (isTransactionHappening) {
-                    const transaction = new Transaction({
-                        sourceIndex: i,
-                        targetIndex: j,
-                        resources: transactionResources
-                    })
-                    state.transactions.push(transaction)
-                    transaction.execute(nodes, config)
-                }
+            if (isTransactionHappening) {
+                const transaction = new Transaction({
+                    sourceIndex: i,
+                    targetIndex: j,
+                    resources: transactionResources
+                })
+                state.transactions.push(transaction)
+                transaction.execute(nodes, config)
             }
         }
     }

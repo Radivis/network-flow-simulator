@@ -14,45 +14,43 @@ const donations = (state, config, worker) => {
     const { resources } = config;
 
     for (let i = 0; i < nodes.length; i++) {
-        // Need to remove i in nodes for the following step!
-        const partners = selectRandomElements(nodes, config.maxAmountOfDonations)
+        const nodesWithoutI = [...nodes.slice(0, i), ...nodes.slice(i + 1)]
+        const partners = selectRandomElements(nodesWithoutI, config.maxAmountOfDonations)
 
         for (let j = 0; j < partners.length; j++) {
-            if (i != j) {
 
-                // Node distance
-                const d = Node.d(nodes[i], partners[j])
+            // Node distance
+            const d = Node.d(nodes[i], partners[j])
 
-                const transactionResources = [... new Array(resources.length)].fill(0)
+            const transactionResources = [... new Array(resources.length)].fill(0)
 
-                let isTransactionHappening = false;
+            let isTransactionHappening = false;
 
-                for (let r = 0; r < resources.length; r++) {
-                    let resource = resources[r]
+            for (let r = 0; r < resources.length; r++) {
+                let resource = resources[r]
 
-                    let donationProbability = +resource.donationBaseProbability / d;
+                let donationProbability = +resource.donationBaseProbability / d;
 
-                    if (Math.random() < donationProbability) {
-                        isTransactionHappening = true;
+                if (Math.random() < donationProbability) {
+                    isTransactionHappening = true;
 
-                        // A node can't give more than it has!
-                        const transactionValue = Math.min(
-                            config.resources[r].outflowMean,
-                            nodes[i].resources[r]
-                        );
-                        transactionResources[r] = transactionValue;
-                    }
+                    // A node can't give more than it has!
+                    const transactionValue = Math.min(
+                        config.resources[r].outflowMean,
+                        nodes[i].resources[r]
+                    );
+                    transactionResources[r] = transactionValue;
                 }
+            }
 
-                if (isTransactionHappening) {
-                    const transaction = new Transaction({
-                        sourceIndex: i,
-                        targetId: partners[j].id,
-                        resources: transactionResources
-                    })
-                    state.transactions.push(transaction)
-                    transaction.execute(nodes, config)
-                }
+            if (isTransactionHappening) {
+                const transaction = new Transaction({
+                    sourceIndex: i,
+                    targetId: partners[j].id,
+                    resources: transactionResources
+                })
+                state.transactions.push(transaction)
+                transaction.execute(nodes, config)
             }
         }
     }
