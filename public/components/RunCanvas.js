@@ -169,12 +169,14 @@ class RunCanvas {
     }
 
     // renders a momentary state of a simulation run
-    renderState(state) {
+    renderState() {
         this.removeAllEventListeners()
         this.clearCanvas()
 
         // DEBUG
         console.log('Rendering canvas');
+
+        const state = this.runData.states[this.stateIndex]
 
         state.nodes.forEach((node, index) => {
             this.drawNode(node, this.selectedNodeIndex == index ? true : false)

@@ -78,7 +78,7 @@ const visualization = (parent, runData, configData) => {
     })
     elements.showTransactions.checkbox.addEventListener('change', () => {
         elements.runCanvas.areTransactionsVisible = elements.showTransactions.checkbox.checked
-        elements.runCanvas.renderState(elements.runCanvas.state)
+        elements.runCanvas.renderState()
     })
 
     console.log(runData);
