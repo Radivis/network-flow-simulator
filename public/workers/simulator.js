@@ -5,6 +5,41 @@ import Node from '../model/Node.js'
 import State from '../model/State.js'
 import rules from '../rules/rules.js';
 
+// CONSTANTS
+
+// HELPER FUNCTIONS
+
+// With these settings there is enough space for at least 1000 nodes
+// However, the process of placing 1000 nodes can take a couple of seconds!
+const defaultSafeDistance = 0.025
+const defaultPadding = 0.02
+
+const getFreeCoordinates = ({
+    nodes,
+    safeDistance = defaultSafeDistance,
+    padding = defaultPadding
+} = {}) => {
+    let candidateX, candidateY;
+    let isTooCloseToNode = true;
+
+    while (isTooCloseToNode) {
+        // The padding creates a distance to the boundary
+        candidateX = padding + Math.random() * (1 - 2 * padding);
+        candidateY = padding + Math.random() * (1 - 2 * padding);
+
+        isTooCloseToNode = false;
+
+        for (let i = 0; i < nodes.length && !isTooCloseToNode; i++) {
+            const candidateNode = new Node({x: candidateX, y: candidateY});
+            if (Node.d(candidateNode, nodes[i]) < safeDistance) {
+                isTooCloseToNode = true;
+            }
+        }
+    }
+
+    return {x: candidateX, y: candidateY}
+}
+
 self.log = value => {
     let debugString = value;
 
@@ -20,6 +55,8 @@ self.log = value => {
         payload: `Debug Message from Worker #${self.id}: ${debugString}`
     })
 }
+
+// MESSAGE HANDLERS
 
 self.onmessage = msg => {
     // Load config
@@ -39,20 +76,17 @@ self.onmessage = msg => {
     // Create nodes
     const resources = [... new Array(config.resources.length)]
         .map((nothing, index) => Number(config.resources[index].initialNodeStock));
-    // const nodes = [... new Array(amountOfNodes)].map(() => new Node({resources}))
 
     const nodes = []
     for (let i = 0; i < amountOfNodes; i++) {
-        nodes.push(new Node({resources, id: i}))
-    }
+        // DEBUG
+        if (i % 50 == 0) {
+            self.log(`Looking for free space for node ${i}`)
+        }
 
-    // Create vertices <- this approach is very inefficient, because this creates too many empty vertices
-    // const vertices = [];
-    // for (let i = 0; i < amountOfNodes; i++) {
-    //     for (let j = 0; j < amountOfNodes; j++) {
-    //         vertices.push(new Vertex(i, j))
-    //     }
-    // }
+        const {x, y} = getFreeCoordinates({nodes})
+        nodes.push(new Node({x, y, resources, id: i}))
+    }
 
     // Create initial state
     const states = [new State(nodes)]
