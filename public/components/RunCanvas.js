@@ -146,7 +146,10 @@ class RunCanvas {
         })
 
         // compute angle that the transaction arrow points to (0 is downwards)
-        const angle = -Math.atan((endX - startX) / (endY - startY))
+        let angle = -Math.atan((endX - startX) / (endY - startY))
+
+        // if the y axis is "reversed", the arrow needs to point in the opposite direction
+        if (endY -startY < 0) angle = angle + Math.PI
 
         /*
         transaction arrows point towards the target and are close to it
