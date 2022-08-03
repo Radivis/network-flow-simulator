@@ -65,14 +65,16 @@ class Transaction extends Vertex {
     }
 
     getSourceNode(nodes) {
-        let sourceNode = nodes[this.sourceIndex]
+        let sourceNode
+        if (isFinite(this.sourceIndex)) sourceNode = nodes[this.sourceIndex]
         if (isFinite(this.sourceId)) sourceNode = Node.getNodeById(nodes, this.sourceId)
 
         return sourceNode
     }
 
     getTargetNode(nodes) {
-        let targetNode = nodes[this.targetIndex]
+        let targetNode
+        if (isFinite(this.targetIndex)) targetNode = nodes[this.targetIndex]
         if (isFinite(this.targetId)) targetNode = Node.getNodeById(nodes, this.targetId)
 
         return targetNode

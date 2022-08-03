@@ -8,6 +8,18 @@ const math = {
         if (value < min) return min;
         return value;
     },
+
+    // Selects n distinct random elements from an array
+    selectRandomElements(arr, amount) {
+        const elements = new Set()
+
+        while (elements.size < amount) {
+            const randomIndex = createInteger(0, arr.length -1)
+            elements.add(arr[randomIndex])
+        }
+
+        return Array.from(elements)
+    },
     
     // Returns the middle value of an array of numbers
     median(arr) {
@@ -32,4 +44,4 @@ const math = {
 export default math;
 
 // Named exports
-export let { clamp, createInteger, median } = math;
+export let { clamp, createInteger, selectRandomElements, median } = math;

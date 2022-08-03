@@ -6,6 +6,7 @@ This rule determines the behavior of a node to start a unilateral resource trans
 
 import Node from '../model/Node.js'
 import Transaction from '../model/Transaction.js';
+import { selectRandomElements } from '../util/math.js';
 
 // Worker is passed for debugging purposes
 const donations = (state, config, worker) => {
@@ -13,11 +14,14 @@ const donations = (state, config, worker) => {
     const { resources } = config;
 
     for (let i = 0; i < nodes.length; i++) {
-        for (let j = 0; j < nodes.length; j++) {
+        // Need to remove i in nodes for the following step!
+        const partners = selectRandomElements(nodes, config.maxAmountOfDonations)
+
+        for (let j = 0; j < partners.length; j++) {
             if (i != j) {
 
                 // Node distance
-                const d = Node.d(nodes[i], nodes[j])
+                const d = Node.d(nodes[i], partners[j])
 
                 const transactionResources = [... new Array(resources.length)].fill(0)
 
@@ -43,7 +47,7 @@ const donations = (state, config, worker) => {
                 if (isTransactionHappening) {
                     const transaction = new Transaction({
                         sourceIndex: i,
-                        targetIndex: j,
+                        targetId: partners[j].id,
                         resources: transactionResources
                     })
                     state.transactions.push(transaction)

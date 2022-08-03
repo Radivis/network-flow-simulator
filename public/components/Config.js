@@ -44,6 +44,28 @@ const config = (parent, simulationData) => {
         parent: nonInputElements.container
     }).field
 
+    inputElements.maxAmountOfDonations = inputRange({
+        name: 'maxAmountOfDonations',
+        label: 'Maximum number of donations per node and time step',
+        min: 1,
+        max: 100,
+        defaultValue: 5,
+        step: 1,
+        isInteger: true,
+        parent: nonInputElements.container
+    }).field
+
+    inputElements.maxAmountOfExchanges = inputRange({
+        name: 'maxAmountOfExchanges',
+        label: 'Maximum number of exchanges per node and time step',
+        min: 1,
+        max: 100,
+        defaultValue: 10,
+        step: 1,
+        isInteger: true,
+        parent: nonInputElements.container
+    }).field
+
     inputElements.resources = configResourcesOuter(nonInputElements.container);
 
     inputElements.amountOfTicks = inputRange({

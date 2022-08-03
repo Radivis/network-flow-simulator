@@ -253,14 +253,19 @@ class RunCanvas {
 
                 // Get all transactions that involve this node
                 const nodeTransactions = state.transactions.filter(transaction => {
-                    return transaction.sourceIndex == i || transaction.targetIndex == i
+                    return transaction.sourceIndex == i
+                    || transaction.targetIndex == i
+                    || transaction.sourceId == node.id
+                    || transaction.targetId == node.id
                 })
 
                 nodeTransactions.forEach(transaction => {
+                    // Note that at this stage, the transaction is a raw object without methods
+                    transaction = new Transaction(transaction)
                     this.drawTransaction({
                         transaction,
-                        sourceNode: state.nodes[transaction.sourceIndex],
-                        targetNode: state.nodes[transaction.targetIndex],
+                        sourceNode: transaction.getSourceNode(state.nodes),
+                        targetNode: transaction.getTargetNode(state.nodes),
                         isHighlighted: true
                     })
                 })
