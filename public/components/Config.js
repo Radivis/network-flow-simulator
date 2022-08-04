@@ -2,6 +2,7 @@
 
 import { createElement } from '../util/dom.js';
 import inputRange from './inputRange.js';
+import inputText from './inputText.js';
 import configResourcesOuter from './configResourcesOuter.js';
 import configRules from './configRules.js';
 
@@ -20,6 +21,14 @@ const config = (parent, simulationData) => {
         parent: nonInputElements.container,
         content: 'Simulation Settings'
     });
+
+    inputElements.simulationName = inputText({
+        name: 'simulationName',
+        label: 'Name of simulation',
+        min: 2,
+        defaultValue: `Simulation ${simulationData.id}`,
+        parent: nonInputElements.container
+    }).field
 
     inputElements.amountOfNodes = inputRange({
         name: 'amountOfNodes',

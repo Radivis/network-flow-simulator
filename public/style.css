@@ -69,3 +69,8 @@ label::after {
     background-image: url('../img/blue-progress-transition-left-to-right.png');
     background-repeat: no-repeat;
 }
+
+.stealth-link {
+    text-decoration: none;
+    color: black;
+}

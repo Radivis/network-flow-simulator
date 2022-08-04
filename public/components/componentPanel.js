@@ -10,7 +10,8 @@ const componentPanel = ({
     headerTagName,
     collapsableContainer,
     isExportable = false,
-    prepend
+    prepend,
+    data
 } = {}) => {
     const elements = {}
 
@@ -50,8 +51,32 @@ const componentPanel = ({
         elements.exportToClientButton = createElement({
             parent: elements.buttonContainer,
             type: 'button',
-            content: 'exportToClient'
         })
+
+        elements.exportToClientLink = createElement({
+            parent: elements.exportToClientButton,
+            type: 'a',
+            content: 'exportToClient',
+            classes: ['stealth-link']
+        })
+
+        const exportDataToClient = () => {
+            const exportData = JSON.stringify(data);
+
+            const file = new Blob([exportData], { type: "text/json", charset: "utf-8" });
+            const filename = "data.json";
+            const url = URL.createObjectURL(file);
+
+            elements.exportToClientLink.href = url;
+            elements.exportToClientLink.download = filename;
+
+            // This is needed to clear up memory that was used up by the blob
+            setTimeout(function () {
+                window.URL.revokeObjectURL(url);
+            }, 0);
+        }
+
+        elements.exportToClientButton.addEventListener('click', exportDataToClient)
         
         elements.importFromClientButton = createElement({
             parent: elements.buttonContainer,

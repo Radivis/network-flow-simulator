@@ -25,8 +25,9 @@ const simulation = (parent, simulationData) => {
         title: `Simulation ${simulationData.id}`,
         headerTagName: 'h2',
         isExportable: true,
+        data: simulationData,
         collapsableContainer: elements.innerContainer,
-        prepend: true
+        prepend: true,
     })
 
     // #1: Config

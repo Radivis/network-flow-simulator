@@ -39,6 +39,9 @@ const runsContainer = (parent, simulationData, configInputElements, renderVisual
         for (let i = amountOfPreviousRuns; i < (simulationData.config.amountOfNewRuns + amountOfPreviousRuns); i++) {
             simulationData.runs[i].id = i;
 
+            // Runs should have a copy of the simulation config
+            simulationData.runs[i].config = simulationData.config
+
             // Workers need to have type: 'module', so that they can import the models
             const simulationWorker = new Worker('../workers/simulator.js', { type: 'module' });
 

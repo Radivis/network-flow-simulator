@@ -70,6 +70,15 @@ server.use(express.json());
 
 // ROUTES
 
+server.post('/simulation', (req, res) => {
+    let simulationData = req.body.data;
+
+    fs.writeFile(
+        `./simulations/${simulationData.simulationName}.json`,
+        JSON.stringify(simulationData),
+        err => { if (err) console.warn(err) }
+        )
+})
 
 // Log errors
 server.use((req, res, next) => {
