@@ -1,29 +1,40 @@
 'use strict';
 
 import { createElement } from '../util/dom.js';
+import componentPanel from './componentPanel.js';
 import config from './config.js'
 import runsContainer from './runsContainer.js';
 import visualizations from './visualizations.js';
 import visualization from './visualization.js';
 
 const simulation = (parent, simulationData) => {
-    const containerEl = createElement({
+    const elements = {}
+
+    elements.outerContainer = createElement({
         classes: ['container'],
         parent
     });
 
-    const headerEl = createElement({
-        type: 'h2',
-        parent: containerEl,
-        content: `Simulation ${simulationData.id}`
+    elements.innerContainer = createElement({
+        parent: elements.outerContainer,
+        classes: ['container'],
     });
 
+    elements.panel = componentPanel({
+        parent: elements.outerContainer,
+        title: `Simulation ${simulationData.id}`,
+        headerTagName: 'h2',
+        isExportable: true,
+        collapsableContainer: elements.innerContainer,
+        prepend: true
+    })
+
     // #1: Config
-    const configInputElements = config(containerEl, simulationData);
+    elements.configInput = config(elements.innerContainer, simulationData);
 
     // #2: Runs
-    const runsOuterContainerEl = createElement({
-        parent: containerEl,
+    elements.runsOuterContainer = createElement({
+        parent: elements.innerContainer,
         classes: ['container'],
         id: `runs-container-${simulationData.id}`
     })
@@ -35,9 +46,9 @@ const simulation = (parent, simulationData) => {
     const renderVisualization = (id) => {
         let visualizationsContainers = {}
         if (activeVisualizations.length <= 0) {
-            visualizationsContainers = visualizations(containerEl, simulationData)
+            visualizationsContainers = visualizations(elements.innerContainer, simulationData)
         } else {
-            visualizationsContainers.outerContainer = containerEl
+            visualizationsContainers.outerContainer = elements.innerContainer
                 .querySelector(`#visualizations-outer-${simulationData.id}`);
             visualizationsContainers.innerContainer = visualizationsContainers.outerContainer
                 .querySelector(`#visualizations-inner-${simulationData.id}`);
@@ -55,7 +66,7 @@ const simulation = (parent, simulationData) => {
         if (activeVisualizations.length <= 0) visualizationsContainers.outerContainer.remove()
     }
 
-    runsContainer(runsOuterContainerEl, simulationData, configInputElements, renderVisualization)
+    elements.runsContainer = runsContainer(elements.runsOuterContainer, simulationData, elements.configInput, renderVisualization)
 }
 
 export default simulation;

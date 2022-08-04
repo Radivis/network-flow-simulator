@@ -7,10 +7,33 @@ button {
     font-weight: bold;
     padding: 4px;
     margin: 5px;
+    background: hsl(180, 50%, 80%);
+    border-radius: 5px;
 }
 
 canvas {
     border: 1px solid #aaa;
+}
+
+.collapsed {
+    display: none !important;
+}
+
+.collapse-button {
+    width: 32px;
+    height: 32px;
+}
+
+.component-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: top;
+    /* compensate for the padding on the container! */
+    margin: -6px -6px 0px -5px;
+    padding: 6px;
+    background: hsl(180, 75%, 60%);
+    border-bottom: 1px solid hsl(180, 75%, 20%);
+    border-radius: 5px 5px 0px 0px;
 }
 
 .container {
@@ -18,9 +41,18 @@ canvas {
     display: block;
     padding: 5px;
     margin: 5px;
-    background: #eee;
+    background: hsla(180, 25%, 90%, 0.5);
     border: 1px solid hsla(240,50%,50%, 0.2);
     border-radius: 5px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.inline-block {
+    display: inline-block;
 }
 
 input[type="range"] {

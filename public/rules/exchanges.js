@@ -57,7 +57,10 @@ const exchanges = (state, config, worker) => {
 
     for (let i = 0; i < nodes.length; i++) {
         const nodesWithoutI = [...nodes.slice(0, i), ...nodes.slice(i + 1)]
-        const partners = selectRandomElements(nodesWithoutI, config.maxAmountOfExchanges)
+        const partners = selectRandomElements(nodesWithoutI, Math.min(
+            config.maxAmountOfExchanges,
+            nodesWithoutI.length
+            ))
 
         for (let p = 0; p < partners.length; p++) {
             // Get index of partner in nodes array

@@ -15,7 +15,10 @@ const donations = (state, config, worker) => {
 
     for (let i = 0; i < nodes.length; i++) {
         const nodesWithoutI = [...nodes.slice(0, i), ...nodes.slice(i + 1)]
-        const partners = selectRandomElements(nodesWithoutI, config.maxAmountOfDonations)
+        const partners = selectRandomElements(nodesWithoutI, Math.min(
+            config.maxAmountOfDonations,
+            nodesWithoutI.length
+            ))
 
         for (let j = 0; j < partners.length; j++) {
 
