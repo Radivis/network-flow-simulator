@@ -8,25 +8,30 @@ import RunCanvas from "./runCanvas.js";
 
 const visualization = (parent, runData, configData) => {
     const elements = {}
+
+    elements.outerContainer = createElement({
+        parent,
+        classes: ['container']
+    })
     
-    elements.headerEl = createElement({
+    elements.header = createElement({
+        parent: elements.outerContainer,
         type: 'h4',
-        parent: parent,
         content: 'Visualization of Run ' + runData.id
     })
     
     elements.runCanvas = new RunCanvas({
-        parent,
+        parent: elements.outerContainer,
         config: configData,
         runData: runData,
     })
     
     elements.controlsContainer = createElement({
-        parent,
-        classes: ['container']
+        parent: elements.outerContainer,
+        classes: ['formal-container']
     })
 
-    // CALLBACKS
+    // CALLBACKS FOR INTERACTION WITH RUN CANVAS
     
     const setStateIndex = (ev) => {
         elements.runCanvas.setStateIndex(+ev.target.value)

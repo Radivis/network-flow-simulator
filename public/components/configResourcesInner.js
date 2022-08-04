@@ -9,7 +9,7 @@ const configResourcesInner = (parent, simulationData) => {
     const nonInputElements = {}
     
     nonInputElements.container = createElement({
-        classes: ['container'],
+        classes: ['formal-container'],
         parent
     });
 

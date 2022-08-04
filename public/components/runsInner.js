@@ -35,7 +35,7 @@ const runsInner = (parent, simulationData, renderVisualization) => {
 
         runsContainerEl = createElement({
             parent: parent,
-            classes: ['container'],
+            classes: ['formal-container'],
             id: `runs-container-${simulationData.id}`
          })
     }

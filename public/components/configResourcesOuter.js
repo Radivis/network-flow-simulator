@@ -16,7 +16,7 @@ const configResourcesOuter = (parent, simulationData) => {
     });
 
     nonInputElements.innerContainer = createElement({
-        classes: ['container'],
+        classes: ['formal-container'],
         parent: nonInputElements.outerContainer
     });
 
@@ -37,6 +37,8 @@ const configResourcesOuter = (parent, simulationData) => {
         content: 'Add Resource'
     })
     nonInputElements.addResourceButton.addEventListener('click', addResource)
+
+    // COMPONENT PANEL SETUP
 
     const importDataCallback = resourcesData => {
         // First create enough resource windows

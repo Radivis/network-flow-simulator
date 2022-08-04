@@ -9,31 +9,33 @@ const simulations = (parent, simulationsData) => {
     // clear parent
     parent.innerHTML = '';
 
-    const outerContainerEl = createElement({
+    const elements = {}
+
+    elements.outerContainer = createElement({
         parent
     });
 
-    const innerContainerEl = createElement({
-        parent: outerContainerEl
+    elements.innerContainer = createElement({
+        parent: elements.outerContainer
     });
     
     if (simulationsData.length > 0) {
         // update
         for (let i = 0; i < simulationsData.length; i++) {
-            simulation(innerContainerEl, simulatiosData[i])
+            simulation(elements.innerContainer, simulatiosData[i])
         }
     } else {
         // initialization
-        simulationsData.push(simulation(innerContainerEl, {id: 1}))
+        simulationsData.push(simulation(elements.innerContainer, {id: 1}))
     }
 
-    const addSimulationButtonEl = createElement({
+    elements.addSimulationButton = createElement({
         type: 'button',
-        parent: outerContainerEl,
+        parent: elements.outerContainer,
         content: 'Add simulation',
     })
     addSimulationButtonEl.addEventListener('click', () => {
-        simulationsData.push(simulation(innerContainerEl, {id: simulationsData.length+1}))
+        simulationsData.push(simulation(elements.innerContainer, {id: simulationsData.length+1}))
     })
 }
 

@@ -15,36 +15,37 @@ const config = (parent, simulationData) => {
     const nonInputElements = {}
 
     nonInputElements.outerContainer = createElement({
+        parent,
         classes: ['container'],
-        parent
     });
 
     nonInputElements.innerContainer = createElement({
-        classes: ['container'],
-        parent: nonInputElements.outerContainer
+        parent: nonInputElements.outerContainer,
+        classes: ['formal-container'],
     });
 
     inputElements.simulationName = inputText({
+        parent: nonInputElements.innerContainer,
         name: 'simulationName',
         label: 'Name of simulation',
         min: 2,
         defaultValue: `Simulation ${simulationData.id}`,
-        parent: nonInputElements.innerContainer
     }).field
 
     inputElements.amountOfNodes = inputRange({
+        parent: nonInputElements.innerContainer,
         name: 'amountOfNodes',
         label: 'Number of nodes',
         min: 2,
         defaultValue: 100,
         max: 1000,
         isInteger: true,
-        parent: nonInputElements.innerContainer
     }).field
 
     inputElements.rules = configRules(nonInputElements.innerContainer)
 
     inputElements.amountOfNeighborsInheriting = inputRange({
+        parent: nonInputElements.innerContainer,
         name: 'amountOfNeighborsInheriting',
         label: 'After death resources get distributed among the nearest n neighbors',
         min: 1,
@@ -52,10 +53,10 @@ const config = (parent, simulationData) => {
         defaultValue: 3,
         step: 1,
         isInteger: true,
-        parent: nonInputElements.innerContainer
     }).field
 
     inputElements.maxAmountOfDonations = inputRange({
+        parent: nonInputElements.innerContainer,
         name: 'maxAmountOfDonations',
         label: 'Maximum number of donations per node and time step',
         min: 1,
@@ -63,10 +64,10 @@ const config = (parent, simulationData) => {
         defaultValue: 5,
         step: 1,
         isInteger: true,
-        parent: nonInputElements.innerContainer
     }).field
 
     inputElements.maxAmountOfExchanges = inputRange({
+        parent: nonInputElements.innerContainer,
         name: 'maxAmountOfExchanges',
         label: 'Maximum number of exchanges per node and time step',
         min: 1,
@@ -74,7 +75,6 @@ const config = (parent, simulationData) => {
         defaultValue: 10,
         step: 1,
         isInteger: true,
-        parent: nonInputElements.innerContainer
     }).field
 
     const { inputElementsArray, importResourceDataCallback } = configResourcesOuter(nonInputElements.innerContainer, simulationData);
@@ -82,6 +82,7 @@ const config = (parent, simulationData) => {
     inputElements.resources = inputElementsArray
 
     inputElements.amountOfTicks = inputRange({
+        parent: nonInputElements.innerContainer,
         name: 'amountOfTicks',
         label: 'Number of time steps (days) to compute',
         min: 1,
@@ -89,18 +90,19 @@ const config = (parent, simulationData) => {
         max: 7500,
         step: 30,
         isInteger: true,
-        parent: nonInputElements.innerContainer
     }).field
 
     inputElements.amountOfNewRuns = inputRange({
+        parent: nonInputElements.innerContainer,
         name: 'amountOfNewRuns',
         label: 'Number of simulation runs',
         min: 1,
         defaultValue: 4,
         max: 240,
         isInteger: true,
-        parent: nonInputElements.innerContainer
     }).field
+
+    // COMPONENT PANEL SETUP
 
     const importDataCallback = configData => {
         importResourceDataCallback(configData.resources);

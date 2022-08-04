@@ -1,24 +1,30 @@
 'use strict';
 
 import { createElement } from '../util/dom.js';
+import componentPanel from './componentPanel.js';
 import mapElementsToValues from './helpers/mapElementsToValues.js';
 import runsInner from './runsInner.js'
 
 const runsOuter = (parent, simulationData, configInputElements, renderVisualization) => {
-    // clear
-    parent.innerHTML = '';
-
     const elements = {}
 
-    elements.header = createElement({
-        type: 'h3',
-        parent: parent,
-        content: 'Simulation Runs'
-    });
+    elements.outerContainer = createElement({
+        parent,
+        classes: ['container'],
+        id: `runs-container-${simulationData.id}`
+    })
+
+    elements.innerContainer = createElement({
+        parent: elements.outerContainer,
+        classes: ['formal-container']
+    })
+
+    // clear for rerendering
+    elements.innerContainer.innerHTML = '';
 
     elements.computeButton = createElement({
         type: 'button',
-        parent: parent,
+        parent: elements.outerContainer,
         content: 'Run Simulation'
     })
     elements.computeButton.addEventListener('click', () => {
@@ -34,7 +40,7 @@ const runsOuter = (parent, simulationData, configInputElements, renderVisualizat
         const amountOfPreviousRuns = simulationData.runs ? simulationData.runs.length : 0
 
          // render and get "Simulation run" buttons
-        const runElements = runsInner(parent, simulationData, renderVisualization);
+        const runElements = runsInner(elements.outerContainer, simulationData, renderVisualization);
 
         // Compute new simulation runs with webworkers
         for (let i = amountOfPreviousRuns; i < (simulationData.config.amountOfNewRuns + amountOfPreviousRuns); i++) {
@@ -75,6 +81,28 @@ const runsOuter = (parent, simulationData, configInputElements, renderVisualizat
             })
         }
     })
+
+    // COMPONENT PANEL SETUP
+
+    const importDataCallback = runsData => {
+    }
+
+    const exportDataCallback = () => {
+        return JSON.stringify(runsData)
+    }
+
+    elements.panel = componentPanel({
+        parent: elements.outerContainer,
+        title: `Simulation Runs`,
+        headerTagName: 'h3',
+        isExportable: true,
+        importDataCallback,
+        exportDataCallback,
+        collapsableContainer: elements.innerContainer,
+        prepend: true,
+    })
+
+    return elements
 }
 
 export default runsOuter;

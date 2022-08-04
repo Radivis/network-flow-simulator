@@ -45,7 +45,7 @@ canvas {
     border: 1px solid #aaa;
 }
 
-.collapsed {
+.collapsed, .hidden {
     display: none !important;
 }
 
@@ -71,7 +71,7 @@ canvas {
     display: block;
     padding: 5px;
     margin: 5px;
-    background: hsla(180, 25%, 90%, 0.5);
+    background: hsla(180, 25%, 90%, 0.2);
     border: 1px solid hsla(240, 50%, 50%, 0.2);
     border-radius: 5px;
 }
@@ -84,6 +84,13 @@ h5,
 h6 {
     margin-top: 5px;
     margin-bottom: 10px;
+}
+
+.formal-container {
+    position: relative;
+    display: block;
+    padding: 0px;
+    margin: 0px;
 }
 
 .inline-block {

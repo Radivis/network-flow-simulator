@@ -20,7 +20,7 @@ const configResource = (parent, simulationData, resourceId) => {
     });
 
     nonInputElements.innerContainer = createElement({
-        classes: ['container'],
+        classes: ['formal-container'],
         parent: nonInputElements.outerContainer
     });
 
@@ -94,6 +94,8 @@ const configResource = (parent, simulationData, resourceId) => {
         defaultValue: false,
         parent: nonInputElements.innerContainer
     }).checkbox
+
+    // COMPONENT PANEL SETUP
 
     const importDataCallback = resourceData => {
         updateElementValues(inputElements, resourceData)
