@@ -20,12 +20,18 @@ const simulation = (parent, simulationData) => {
         classes: ['container'],
     });
 
+    const importDataCallback = importedData => {
+        simulationData = importedData;
+        console.log(simulationData);
+    }
+
     elements.panel = componentPanel({
         parent: elements.outerContainer,
         title: `Simulation ${simulationData.id}`,
         headerTagName: 'h2',
         isExportable: true,
         data: simulationData,
+        importDataCallback,
         collapsableContainer: elements.innerContainer,
         prepend: true,
     })

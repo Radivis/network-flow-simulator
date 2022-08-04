@@ -10,6 +10,7 @@ const componentPanel = ({
     headerTagName,
     collapsableContainer,
     isExportable = false,
+    importDataCallback,
     prepend,
     data
 } = {}) => {
@@ -34,20 +35,20 @@ const componentPanel = ({
         classes: ['inline-block']
     })
 
-    
+
     if (isExportable) {
         elements.exportToServerButton = createElement({
             parent: elements.buttonContainer,
             type: 'button',
             content: 'export To Server'
         })
-        
+
         elements.importFromServerButton = createElement({
             parent: elements.buttonContainer,
             type: 'button',
             content: 'importFromServer'
         })
-        
+
         elements.exportToClientButton = createElement({
             parent: elements.buttonContainer,
             type: 'button',
@@ -77,12 +78,44 @@ const componentPanel = ({
         }
 
         elements.exportToClientButton.addEventListener('click', exportDataToClient)
-        
-        elements.importFromClientButton = createElement({
+
+        // elements.importFromClientButton = createElement({
+        //     parent: elements.buttonContainer,
+        //     type: 'button',
+        //     content: 'importFromClient'
+        // })
+
+        elements.importFromClientInput = createElement({
             parent: elements.buttonContainer,
-            type: 'button',
+            type: 'input',
+            props: {
+                type: 'file'
+            },
+            classes: ['buttony-file-import'],
             content: 'importFromClient'
         })
+
+        const importDataFromClient = () => {
+            // TODO: refactor this to fetch syntax later
+            let request = new XMLHttpRequest();
+            let file = elements.importFromClientInput.files[0];
+            let url = URL.createObjectURL(file);
+
+            request.open("GET", url);
+            request.addEventListener("load", (ev) => {
+                if (ev.target.status == 200) {
+                    let loadedData = ev.target.response;
+
+                    importDataCallback(JSON.parse(loadedData))
+                } else {
+                    console.warn(ev.target.statusText);
+                }
+            })
+            request.send();
+        }
+
+        elements.importFromClientInput.addEventListener('change', importDataFromClient)
+
     }
 
     elements.collapseButton = createElement({
@@ -91,7 +124,7 @@ const componentPanel = ({
         content: '-',
         classes: ['collapse-button']
     })
-    
+
     const collapse = () => {
         collapsableContainer.classList.toggle('collapsed')
 

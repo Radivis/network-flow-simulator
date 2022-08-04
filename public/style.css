@@ -8,7 +8,37 @@ button {
     padding: 4px;
     margin: 5px;
     background: hsl(180, 50%, 80%);
+    border: 2px solid hsl(180, 50%, 30%);
     border-radius: 5px;
+}
+
+/* Hack to hide the default file input elements. Needs to be adjusted to actual button size! */
+.buttony-file-import{
+    width: 155px;
+}
+
+/* Hack to hide the default file input button. */
+.buttony-file-import::-webkit-file-upload-button{
+    visibility: hidden;
+    width: 0px;
+}
+
+/* Hack to display the file input element as regular button */
+.buttony-file-import::before{
+    content: 'ImportFromClient';
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 4px;
+    margin: 5px;
+    background: hsl(180, 50%, 80%);
+    border: 2px solid hsl(180, 50%, 30%);
+    border-radius: 5px;
+    outline: none;
+    white-space: nowrap;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
 }
 
 canvas {
@@ -42,11 +72,16 @@ canvas {
     padding: 5px;
     margin: 5px;
     background: hsla(180, 25%, 90%, 0.5);
-    border: 1px solid hsla(240,50%,50%, 0.2);
+    border: 1px solid hsla(240, 50%, 50%, 0.2);
     border-radius: 5px;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     margin-top: 5px;
     margin-bottom: 10px;
 }
@@ -58,6 +93,18 @@ h1, h2, h3, h4, h5, h6 {
 input[type="range"] {
     width: 250px;
 }
+
+/* input[type="file"] {
+    font-size: 1em;
+    font-weight: bold;
+    padding: 4px;
+    margin: 5px;
+    background: hsl(180, 50%, 80%);
+    border: 2px solid black;
+    border-radius: 5px;
+    opacity: 0;
+} */
+
 
 label::after {
     content: ': ';
