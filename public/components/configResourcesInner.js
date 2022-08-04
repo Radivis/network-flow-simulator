@@ -3,7 +3,7 @@
 import { createElement } from '../util/dom.js';
 import configResource from './configResource.js';
 
-const configResourcesInner = (parent) => {
+const configResourcesInner = (parent, simulationData) => {
     // Collect input fields in an object, so that they can be accessed more easily
     const inputElementsArray = []
     const nonInputElements = {}
@@ -14,7 +14,8 @@ const configResourcesInner = (parent) => {
     });
 
     const addResource = () => {
-        inputElementsArray.push(configResource(nonInputElements.container))
+        const resourceId = inputElementsArray.length + 1
+        inputElementsArray.push(configResource(nonInputElements.container, simulationData, resourceId))
     }
 
 

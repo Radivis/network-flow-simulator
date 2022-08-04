@@ -11,6 +11,7 @@ const componentPanel = ({
     collapsableContainer,
     isExportable = false,
     importDataCallback,
+    exportDataCallback,
     prepend,
     data
 } = {}) => {
@@ -62,7 +63,8 @@ const componentPanel = ({
         })
 
         const exportDataToClient = () => {
-            const exportData = JSON.stringify(data);
+            // const exportData = JSON.stringify(data);
+            const exportData = exportDataCallback()
 
             const file = new Blob([exportData], { type: "text/json", charset: "utf-8" });
             const filename = "data.json";

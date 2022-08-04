@@ -1,42 +1,41 @@
 'use strict';
 
 import { createElement } from '../util/dom.js';
+import componentPanel from './componentPanel.js';
+import mapElementsToValues from './helpers/mapElementsToValues.js';
+import updateElementValues from './helpers/updateElementValues.js';
 import inputCheckbox from './inputCheckbox.js';
 import inputColor from './inputColor.js';
 import inputRange from './inputRange.js';
 import inputText from './inputText.js';
 
-const configResource = (parent) => {
+const configResource = (parent, simulationData, resourceId) => {
     // Collect input fields in a separate object, so that they can be accessed more easily
     const inputElements = {}
     const nonInputElements = {}
     
-    nonInputElements.container = createElement({
+    nonInputElements.outerContainer = createElement({
         classes: ['container'],
         parent
     });
 
-    nonInputElements.header = createElement({
-        type: 'h5',
-        parent: nonInputElements.container,
-        content: 'Stuff'
+    nonInputElements.innerContainer = createElement({
+        classes: ['container'],
+        parent: nonInputElements.outerContainer
     });
 
     inputElements.name = inputText({
         name: 'name',
         label: 'Name of Resource',
         defaultValue: 'Stuff',
-        parent: nonInputElements.container
+        parent: nonInputElements.innerContainer
     }).field
-    inputElements.name.addEventListener('input', () => {
-        nonInputElements.header.innerHTML = inputElements.name.value
-    })
 
     inputElements.color = inputColor({
         name: 'color',
         label: 'Color',
         defaultValue: '#888',
-        parent: nonInputElements.container
+        parent: nonInputElements.innerContainer
     }).field
 
     inputElements.initialNodeStock = inputRange({
@@ -46,7 +45,7 @@ const configResource = (parent) => {
         defaultValue: 100,
         max: 1000,
         step: 4,
-        parent: nonInputElements.container
+        parent: nonInputElements.innerContainer
     }).field
 
     inputElements.donationBaseProbability = inputRange({
@@ -56,7 +55,7 @@ const configResource = (parent) => {
         defaultValue: 0.01,
         max: 1,
         step: 0.004,
-        parent: nonInputElements.container
+        parent: nonInputElements.innerContainer
     }).field
 
     inputElements.saleBaseProbability = inputRange({
@@ -66,7 +65,7 @@ const configResource = (parent) => {
         defaultValue: 0.03,
         max: 1,
         step: 0.004,
-        parent: nonInputElements.container
+        parent: nonInputElements.innerContainer
     }).field
 
     inputElements.purchaseBaseProbability = inputRange({
@@ -76,7 +75,7 @@ const configResource = (parent) => {
         defaultValue: 0.03,
         max: 1,
         step: 0.004,
-        parent: nonInputElements.container
+        parent: nonInputElements.innerContainer
     }).field
 
     inputElements.outflowMean = inputRange({
@@ -86,15 +85,36 @@ const configResource = (parent) => {
         defaultValue: 10,
         max: 100,
         step: 0.4,
-        parent: nonInputElements.container
+        parent: nonInputElements.innerContainer
     }).field
 
     inputElements.existential = inputCheckbox({
         name: 'existential',
         label: 'Necessary for survival',
         defaultValue: false,
-        parent: nonInputElements.container
+        parent: nonInputElements.innerContainer
     }).checkbox
+
+    const importDataCallback = resourceData => {
+        updateElementValues(inputElements, resourceData)
+    }
+
+    const exportDataCallback = () => {
+        return JSON.stringify(mapElementsToValues(inputElements))
+    }
+
+    nonInputElements.panel = componentPanel({
+        parent: nonInputElements.outerContainer,
+        title: `Resource ${resourceId}`,
+        headerTagName: 'h5',
+        isExportable: true,
+        data: simulationData,
+        importDataCallback,
+        exportDataCallback,
+        collapsableContainer: nonInputElements.innerContainer,
+        prepend: true,
+    })
+
 
     return inputElements
 }

@@ -75,7 +75,7 @@ const config = (parent, simulationData) => {
         parent: nonInputElements.container
     }).field
 
-    inputElements.resources = configResourcesOuter(nonInputElements.container);
+    inputElements.resources = configResourcesOuter(nonInputElements.container, simulationData);
 
     inputElements.amountOfTicks = inputRange({
         name: 'amountOfTicks',
