@@ -1,6 +1,9 @@
 'use strict';
 
 import { createElement } from '../util/dom.js';
+import componentPanel from './componentPanel.js';
+import mapElementsToValues from './helpers/mapElementsToValues.js';
+import updateElementValues from './helpers/updateElementValues.js';
 import inputRange from './inputRange.js';
 import inputText from './inputText.js';
 import configResourcesOuter from './configResourcesOuter.js';
@@ -19,12 +22,6 @@ const config = (parent, simulationData) => {
     nonInputElements.innerContainer = createElement({
         classes: ['container'],
         parent: nonInputElements.outerContainer
-    });
-
-    nonInputElements.header = createElement({
-        type: 'h3',
-        parent: nonInputElements.outerContainer,
-        content: 'Simulation Settings'
     });
 
     inputElements.simulationName = inputText({
@@ -80,7 +77,9 @@ const config = (parent, simulationData) => {
         parent: nonInputElements.innerContainer
     }).field
 
-    inputElements.resources = configResourcesOuter(nonInputElements.innerContainer, simulationData);
+    const { inputElementsArray, importResourceDataCallback } = configResourcesOuter(nonInputElements.innerContainer, simulationData);
+
+    inputElements.resources = inputElementsArray
 
     inputElements.amountOfTicks = inputRange({
         name: 'amountOfTicks',
@@ -102,6 +101,27 @@ const config = (parent, simulationData) => {
         isInteger: true,
         parent: nonInputElements.innerContainer
     }).field
+
+    const importDataCallback = configData => {
+        importResourceDataCallback(configData.resources);
+        updateElementValues(inputElements, configData)
+    }
+
+    const exportDataCallback = () => {
+        return JSON.stringify(mapElementsToValues(inputElements))
+    }
+
+    nonInputElements.panel = componentPanel({
+        parent: nonInputElements.outerContainer,
+        title: `Simulation Settings`,
+        headerTagName: 'h3',
+        isExportable: true,
+        data: simulationData,
+        importDataCallback,
+        exportDataCallback,
+        collapsableContainer: nonInputElements.innerContainer,
+        prepend: true,
+    })
 
     return inputElements;
 }

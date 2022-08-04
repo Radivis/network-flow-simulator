@@ -38,15 +38,17 @@ const configResourcesOuter = (parent, simulationData) => {
     })
     nonInputElements.addResourceButton.addEventListener('click', addResource)
 
-    const importDataCallback = resourceData => {
+    const importDataCallback = resourcesData => {
         // First create enough resource windows
-        const amountOfMissingResourceElements = Object.keys(resourceData).length - inputElementsArray.length
+        const amountOfResources = resourcesData.constructor == Array ? resourcesData.length : Object.keys(resourcesData).length
+
+        const amountOfMissingResourceElements = amountOfResources - inputElementsArray.length
 
         for (let i = 0; i < amountOfMissingResourceElements; i++) {
             addResource()
         }
 
-        updateElementValues(inputElementsArray, resourceData)
+        updateElementValues(inputElementsArray, resourcesData)
     }
 
     const exportDataCallback = () => {
@@ -65,8 +67,7 @@ const configResourcesOuter = (parent, simulationData) => {
         prepend: true,
     })
 
-
-    return inputElementsArray
+    return { inputElementsArray, importResourceDataCallback: importDataCallback }
 }
 
 export default configResourcesOuter;
