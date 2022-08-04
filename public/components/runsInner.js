@@ -3,18 +3,8 @@
 import { createElement } from '../util/dom.js';
 import run from './run.js'
 
-const runs = (parent, simulationData, renderVisualization) => {
+const runsInner = (parent, simulationData, renderVisualization) => {
     const { config, runs } = simulationData;
-
-    /*
-    The following doesn't work, because the object reference for each array entry is the same!
-    This means that changing one array element will change all others!
-    */
-
-    // const newRuns = [...new Array(+config.amountOfNewRuns)].fill({
-    //     progress: 0,
-    //     states: {}
-    // })
 
     const newRuns = [];
     for (let i = 0; i < +config.amountOfNewRuns; i++) {
@@ -27,6 +17,7 @@ const runs = (parent, simulationData, renderVisualization) => {
     let runsContainerEl;
     let runElements = [];
     let amountOfPreviousRuns = 0;
+    
     if(simulationData.runs) {
         // Previous runs have been done
         amountOfPreviousRuns = runs.length;
@@ -74,4 +65,4 @@ const runs = (parent, simulationData, renderVisualization) => {
 
 }
 
-export default runs;
+export default runsInner;

@@ -13,7 +13,6 @@ const componentPanel = ({
     importDataCallback,
     exportDataCallback,
     prepend,
-    data
 } = {}) => {
     const elements = {}
 
@@ -38,17 +37,19 @@ const componentPanel = ({
 
 
     if (isExportable) {
-        elements.exportToServerButton = createElement({
-            parent: elements.buttonContainer,
-            type: 'button',
-            content: 'export To Server'
-        })
+        // TODO: Implement server side export / import later
 
-        elements.importFromServerButton = createElement({
-            parent: elements.buttonContainer,
-            type: 'button',
-            content: 'importFromServer'
-        })
+        // elements.exportToServerButton = createElement({
+        //     parent: elements.buttonContainer,
+        //     type: 'button',
+        //     content: 'export To Server'
+        // })
+
+        // elements.importFromServerButton = createElement({
+        //     parent: elements.buttonContainer,
+        //     type: 'button',
+        //     content: 'importFromServer'
+        // })
 
         elements.exportToClientButton = createElement({
             parent: elements.buttonContainer,
@@ -58,7 +59,7 @@ const componentPanel = ({
         elements.exportToClientLink = createElement({
             parent: elements.exportToClientButton,
             type: 'a',
-            content: 'exportToClient',
+            content: 'Download',
             classes: ['stealth-link']
         })
 
@@ -94,7 +95,7 @@ const componentPanel = ({
                 type: 'file'
             },
             classes: ['buttony-file-import'],
-            content: 'importFromClient'
+            content: 'Upload'
         })
 
         const importDataFromClient = () => {

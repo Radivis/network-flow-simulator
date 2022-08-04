@@ -14,7 +14,7 @@ button {
 
 /* Hack to hide the default file input elements. Needs to be adjusted to actual button size! */
 .buttony-file-import{
-    width: 155px;
+    width: 75px;
 }
 
 /* Hack to hide the default file input button. */
@@ -25,7 +25,7 @@ button {
 
 /* Hack to display the file input element as regular button */
 .buttony-file-import::before{
-    content: 'ImportFromClient';
+    content: 'Upload';
     display: inline-block;
     font-size: 1rem;
     font-weight: bold;

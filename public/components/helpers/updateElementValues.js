@@ -6,9 +6,6 @@ import castNumberIfNumeric from '../../util/string.js';
 const updateElementValues = (htmlObject, valuesObject) => {
     const array = Object.entries(htmlObject);
 
-    // DEBUG
-    console.log(array);
-
     const valueArray = array.map(pair => {
         let [key, val] = pair;
         // nested objects get processed recursively

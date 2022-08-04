@@ -2,30 +2,31 @@
 
 import { createElement } from '../util/dom.js';
 import mapElementsToValues from './helpers/mapElementsToValues.js';
-import run from './run.js'
-import runs from './runs.js'
+import runsInner from './runsInner.js'
 
-const runsContainer = (parent, simulationData, configInputElements, renderVisualization) => {
+const runsOuter = (parent, simulationData, configInputElements, renderVisualization) => {
     // clear
     parent.innerHTML = '';
 
-    const headerEl = createElement({
+    const elements = {}
+
+    elements.header = createElement({
         type: 'h3',
         parent: parent,
         content: 'Simulation Runs'
     });
 
-    const computeButtonEl = createElement({
+    elements.computeButton = createElement({
         type: 'button',
         parent: parent,
         content: 'Run Simulation'
     })
-    computeButtonEl.addEventListener('click', () => {
+    elements.computeButton.addEventListener('click', () => {
         // Go through all input elements and extract their values
         simulationData.config = mapElementsToValues(configInputElements);
 
         // Update button label to indicate that extra runs can be simulated
-        computeButtonEl.innerHTML = 'Add Extra Simulation Runs'
+        elements.computeButton.innerHTML = 'Add Extra Simulation Runs'
 
         // DEBUG
         console.log(simulationData);
@@ -33,7 +34,7 @@ const runsContainer = (parent, simulationData, configInputElements, renderVisual
         const amountOfPreviousRuns = simulationData.runs ? simulationData.runs.length : 0
 
          // render and get "Simulation run" buttons
-        const runElements = runs(parent, simulationData, renderVisualization);
+        const runElements = runsInner(parent, simulationData, renderVisualization);
 
         // Compute new simulation runs with webworkers
         for (let i = amountOfPreviousRuns; i < (simulationData.config.amountOfNewRuns + amountOfPreviousRuns); i++) {
@@ -76,4 +77,4 @@ const runsContainer = (parent, simulationData, configInputElements, renderVisual
     })
 }
 
-export default runsContainer;
+export default runsOuter;

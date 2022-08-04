@@ -123,7 +123,7 @@ const config = (parent, simulationData) => {
         prepend: true,
     })
 
-    return inputElements;
+    return { inputElements, importConfigDataCallback: importDataCallback };
 }
 
 export default config;

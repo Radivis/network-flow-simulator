@@ -2,8 +2,9 @@
 
 import { createElement } from '../util/dom.js';
 import componentPanel from './componentPanel.js';
+import mapElementsToValues from './helpers/mapElementsToValues.js';
 import config from './config.js'
-import runsContainer from './runsContainer.js';
+import runsOuter from './runsOuter.js';
 import visualizations from './visualizations.js';
 import visualization from './visualization.js';
 
@@ -20,24 +21,10 @@ const simulation = (parent, simulationData) => {
         classes: ['container'],
     });
 
-    const importDataCallback = importedData => {
-        simulationData = importedData;
-        console.log(simulationData);
-    }
-
-    elements.panel = componentPanel({
-        parent: elements.outerContainer,
-        title: `Simulation ${simulationData.id}`,
-        headerTagName: 'h2',
-        isExportable: true,
-        data: simulationData,
-        importDataCallback,
-        collapsableContainer: elements.innerContainer,
-        prepend: true,
-    })
-
     // #1: Config
-    elements.configInput = config(elements.innerContainer, simulationData);
+    const { inputElements, importConfigDataCallback } = config(elements.innerContainer, simulationData);
+
+    elements.configInput = inputElements
 
     // #2: Runs
     elements.runsOuterContainer = createElement({
@@ -49,7 +36,12 @@ const simulation = (parent, simulationData) => {
     // Array of ids to store which runs should be visualized
     let activeVisualizations = [];
 
-    // Callback for rendering a visualization
+    /*
+    Callback for rendering a visualization
+
+    Note that this callback is defined here,
+    so that the visibility of the visualizations component can be controlled from here
+    */
     const renderVisualization = (id) => {
         let visualizationsContainers = {}
         if (activeVisualizations.length <= 0) {
@@ -73,7 +65,32 @@ const simulation = (parent, simulationData) => {
         if (activeVisualizations.length <= 0) visualizationsContainers.outerContainer.remove()
     }
 
-    elements.runsContainer = runsContainer(elements.runsOuterContainer, simulationData, elements.configInput, renderVisualization)
+    elements.runsOuter = runsOuter(elements.runsOuterContainer, simulationData, elements.configInput, renderVisualization)
+
+    const importDataCallback = simulationData => {
+        importConfigDataCallback(simulationData.config)
+
+        // Rerender runs element with new simulation data
+        // TODO: Get this to work properly
+        elements.runsOuter = runsOuter(elements.runsOuterContainer, simulationData, elements.configInput, renderVisualization)
+    }
+
+    const exportDataCallback = () => {
+        simulationData.config = mapElementsToValues(elements.configInput)
+        return JSON.stringify(simulationData)
+    }
+
+    elements.panel = componentPanel({
+        parent: elements.outerContainer,
+        title: `Simulation ${simulationData.id}`,
+        headerTagName: 'h2',
+        isExportable: true,
+        importDataCallback,
+        exportDataCallback,
+        collapsableContainer: elements.innerContainer,
+        prepend: true,
+    })
+
 }
 
 export default simulation;
