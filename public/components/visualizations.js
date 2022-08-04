@@ -59,16 +59,6 @@ class Visualizations {
     It stores the ids of the open visualization windows
     */
     toggleVisualization(id) {
-        // let visualizationsContainers = {}
-        // if (this.activeVisualizations.length <= 0) {
-        //     visualizationsContainers = Visualizations(this.elements.innerContainer, this.simulationData)
-        // } else {
-        //     visualizationsContainers.outerContainer = this.elements.innerContainer
-        //         .querySelector(`#visualizations-outer-${simulationData.id}`);
-        //     visualizationsContainers.innerContainer = visualizationsContainers.outerContainer
-        //         .querySelector(`#visualizations-inner-${simulationData.id}`);
-        // }
-
         if (this.activeVisualizations.includes(id)) {
             // Remove id
             this.activeVisualizations = this.activeVisualizations.filter(entry => entry != id)
@@ -79,6 +69,7 @@ class Visualizations {
         }
 
         // Clear and re-render all open visualizations
+        // TODO: Implement this better, since this causes the visualization components to lose their current state!
         this.elements.innerContainer.innerHTML = ''
 
         this.activeVisualizations.forEach(id => {

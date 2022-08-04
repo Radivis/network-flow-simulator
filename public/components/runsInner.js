@@ -9,16 +9,31 @@ const runsInner = (parent, simulationData, renderVisualization) => {
     const newRuns = [];
     for (let i = 0; i < +config.amountOfNewRuns; i++) {
         newRuns.push({
-                progress: 0,
-                states: {}
-            })
+            progress: 0,
+            states: {}
+        })
     }
 
     let runsContainerEl;
     let runElements = [];
     let amountOfPreviousRuns = 0;
-    
-    if(simulationData.runs) {
+
+    // Event listener for rendering Visualizations
+    const pickRunIdAndRenderVisualization = (ev) => {
+        ev.stopPropagation();
+
+        const target = ev.target
+
+        if (target.tagName === 'BUTTON') {
+            // Extract run id from target
+            const idParts = target.id.split('-')
+            const id = Number(idParts[idParts.length - 1])
+
+            renderVisualization(id)
+        }
+    }
+
+    if (simulationData.runs) {
         // Previous runs have been done
         amountOfPreviousRuns = runs.length;
 
@@ -37,7 +52,9 @@ const runsInner = (parent, simulationData, renderVisualization) => {
             parent: parent,
             classes: ['formal-container'],
             id: `runs-container-${simulationData.id}`
-         })
+        })
+        // Take care only to add this event listener once!
+        runsContainerEl.addEventListener('click', pickRunIdAndRenderVisualization)
     }
 
     // Render new run elements
@@ -46,20 +63,10 @@ const runsInner = (parent, simulationData, renderVisualization) => {
         runElements.push(runButtonEl)
     }
 
-    // Event listener for rendering Visualizations
-    runsContainerEl.addEventListener('click', (ev) => {
-        ev.stopPropagation();
 
-        const target = ev.target
 
-        if (target.tagName === 'BUTTON') {
-            // Extract run id from target
-            const idParts = target.id.split('-')
-            const id = Number(idParts[idParts.length -1])
     
-            renderVisualization(id)
-        }
-    })
+
 
     return runElements
 
