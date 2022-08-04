@@ -39,7 +39,7 @@ const runsOuter = (parent, simulationData, configInputElements, renderVisualizat
 
         const amountOfPreviousRuns = simulationData.runs ? simulationData.runs.length : 0
 
-         // render and get "Simulation run" buttons
+        // render and get "Simulation run" buttons
         const runElements = runsInner(elements.outerContainer, simulationData, renderVisualization);
 
         // Compute new simulation runs with webworkers
@@ -66,7 +66,7 @@ const runsOuter = (parent, simulationData, configInputElements, renderVisualizat
                 } else if (msg.data.status == 'pending') {
                     let progress = msg.data.payload;
                     simulationData.runs[i].progress = progress
-                    runElements[i].style.backgroundSize = `${~~(progress*100)}% 100%`
+                    runElements[i].style.backgroundSize = `${~~(progress * 100)}% 100%`
 
                 } else if (msg.data.status == 'debugging') {
                     console.log(msg.data.payload);
@@ -85,10 +85,26 @@ const runsOuter = (parent, simulationData, configInputElements, renderVisualizat
     // COMPONENT PANEL SETUP
 
     const importDataCallback = runsData => {
+        // Go through all input elements and extract their values
+        simulationData.config = mapElementsToValues(configInputElements);
+
+        // render and get "Simulation run" buttons
+        const runElements = runsInner(elements.outerContainer, simulationData, renderVisualization);
+
+        // Fill simulationData with imported runData
+        simulationData.runs = runsData
+
+        // Set run elements to completely loaded
+        runElements.forEach(runElement => runElement.style.backgroundSize = `100% 100%`)
     }
 
     const exportDataCallback = () => {
-        return JSON.stringify(runsData)
+        if (simulationData.runs) {
+            return JSON.stringify(simulationData.runs)
+        } else {
+            alert('No runs to download, yet! Please press the "Run Simulation" button first!')
+        }
+
     }
 
     elements.panel = componentPanel({

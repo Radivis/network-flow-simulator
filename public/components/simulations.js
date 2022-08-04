@@ -34,7 +34,7 @@ const simulations = (parent, simulationsData) => {
         parent: elements.outerContainer,
         content: 'Add simulation',
     })
-    addSimulationButtonEl.addEventListener('click', () => {
+    elements.addSimulationButton.addEventListener('click', () => {
         simulationsData.push(simulation(elements.innerContainer, {id: simulationsData.length+1}))
     })
 }
