@@ -11,14 +11,19 @@ const config = (parent, simulationData) => {
     const inputElements = {}
     const nonInputElements = {}
 
-    nonInputElements.container = createElement({
+    nonInputElements.outerContainer = createElement({
         classes: ['container'],
         parent
     });
 
+    nonInputElements.innerContainer = createElement({
+        classes: ['container'],
+        parent: nonInputElements.outerContainer
+    });
+
     nonInputElements.header = createElement({
         type: 'h3',
-        parent: nonInputElements.container,
+        parent: nonInputElements.outerContainer,
         content: 'Simulation Settings'
     });
 
@@ -27,7 +32,7 @@ const config = (parent, simulationData) => {
         label: 'Name of simulation',
         min: 2,
         defaultValue: `Simulation ${simulationData.id}`,
-        parent: nonInputElements.container
+        parent: nonInputElements.innerContainer
     }).field
 
     inputElements.amountOfNodes = inputRange({
@@ -37,10 +42,10 @@ const config = (parent, simulationData) => {
         defaultValue: 100,
         max: 1000,
         isInteger: true,
-        parent: nonInputElements.container
+        parent: nonInputElements.innerContainer
     }).field
 
-    inputElements.rules = configRules(nonInputElements.container)
+    inputElements.rules = configRules(nonInputElements.innerContainer)
 
     inputElements.amountOfNeighborsInheriting = inputRange({
         name: 'amountOfNeighborsInheriting',
@@ -50,7 +55,7 @@ const config = (parent, simulationData) => {
         defaultValue: 3,
         step: 1,
         isInteger: true,
-        parent: nonInputElements.container
+        parent: nonInputElements.innerContainer
     }).field
 
     inputElements.maxAmountOfDonations = inputRange({
@@ -61,7 +66,7 @@ const config = (parent, simulationData) => {
         defaultValue: 5,
         step: 1,
         isInteger: true,
-        parent: nonInputElements.container
+        parent: nonInputElements.innerContainer
     }).field
 
     inputElements.maxAmountOfExchanges = inputRange({
@@ -72,10 +77,10 @@ const config = (parent, simulationData) => {
         defaultValue: 10,
         step: 1,
         isInteger: true,
-        parent: nonInputElements.container
+        parent: nonInputElements.innerContainer
     }).field
 
-    inputElements.resources = configResourcesOuter(nonInputElements.container, simulationData);
+    inputElements.resources = configResourcesOuter(nonInputElements.innerContainer, simulationData);
 
     inputElements.amountOfTicks = inputRange({
         name: 'amountOfTicks',
@@ -85,7 +90,7 @@ const config = (parent, simulationData) => {
         max: 7500,
         step: 30,
         isInteger: true,
-        parent: nonInputElements.container
+        parent: nonInputElements.innerContainer
     }).field
 
     inputElements.amountOfNewRuns = inputRange({
@@ -95,7 +100,7 @@ const config = (parent, simulationData) => {
         defaultValue: 4,
         max: 240,
         isInteger: true,
-        parent: nonInputElements.container
+        parent: nonInputElements.innerContainer
     }).field
 
     return inputElements;
