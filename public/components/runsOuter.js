@@ -40,7 +40,11 @@ const runsOuter = (parent, simulationData, configInputElements, renderVisualizat
         const amountOfPreviousRuns = simulationData.runs ? simulationData.runs.length : 0
 
         // render and get "Simulation run" buttons
-        const runElements = runsInner(elements.outerContainer, simulationData, renderVisualization);
+        const runElements = runsInner({
+            parent: elements.outerContainer,
+            simulationData,
+            renderVisualization
+        });
 
         // Compute new simulation runs with webworkers
         for (let i = amountOfPreviousRuns; i < (simulationData.config.amountOfNewRuns + amountOfPreviousRuns); i++) {
@@ -85,14 +89,29 @@ const runsOuter = (parent, simulationData, configInputElements, renderVisualizat
     // COMPONENT PANEL SETUP
 
     const importDataCallback = runsData => {
+        // Fill simulationData with imported runData
+        if (!simulationData.runs) {
+            simulationData.runs = runsData
+        } else {
+            simulationData.runs = [...simulationData.runs, ...runsData]
+        }
+
         // Go through all input elements and extract their values
         simulationData.config = mapElementsToValues(configInputElements);
 
-        // render and get "Simulation run" buttons
-        const runElements = runsInner(elements.outerContainer, simulationData, renderVisualization);
+        // Temporarily set amount of new runs to zero, so 
+        const amountOfNewRunsSetting = simulationData.config.amountOfNewRuns;
 
-        // Fill simulationData with imported runData
-        simulationData.runs = runsData
+        // Update button label to indicate that extra runs can be simulated
+        elements.computeButton.innerHTML = 'Add Extra Simulation Runs'
+
+        // render and get "Simulation run" buttons
+        const runElements = runsInner({
+            parent: elements.outerContainer,
+            simulationData,
+            renderVisualization,
+            areRunsImported: true
+        });
 
         // Set run elements to completely loaded
         runElements.forEach(runElement => runElement.style.backgroundSize = `100% 100%`)
@@ -118,7 +137,7 @@ const runsOuter = (parent, simulationData, configInputElements, renderVisualizat
         prepend: true,
     })
 
-    return elements
+    return { elements, importRunsDataCallback: importDataCallback }
 }
 
 export default runsOuter;

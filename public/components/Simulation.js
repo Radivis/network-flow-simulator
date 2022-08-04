@@ -31,7 +31,13 @@ const simulation = (parent, simulationData) => {
     elements.configInput = inputElements
 
     // #2: Runs
-    elements.runsOuter = runsOuter(elements.innerContainer, simulationData, elements.configInput, visualizations.toggleVisualization)
+    const { outerRunsElements, importRunsDataCallback} = runsOuter(
+        elements.innerContainer, simulationData,
+        elements.configInput,
+        visualizations.toggleVisualization
+        )
+
+    elements.runsOuter = outerRunsElements
 
     // #3: Visualizations
     elements.visualizations = visualizations.render()
@@ -40,10 +46,10 @@ const simulation = (parent, simulationData) => {
 
     const importDataCallback = simulationData => {
         importConfigDataCallback(simulationData.config)
-
+        importRunsDataCallback(simulationData.runs)
         // Rerender runs element with new simulation data
         // TODO: Get this to work properly
-        elements.runsOuter = runsOuter(elements.innerContainer, simulationData, elements.configInput, renderVisualization)
+        // elements.runsOuter = runsOuter(elements.innerContainer, simulationData, elements.configInput, renderVisualization)
     }
 
     const exportDataCallback = () => {

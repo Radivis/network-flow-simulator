@@ -3,15 +3,25 @@
 import { createElement } from '../util/dom.js';
 import run from './run.js'
 
-const runsInner = (parent, simulationData, renderVisualization) => {
+const runsInner = ({
+    parent,
+    simulationData,
+    renderVisualization,
+    areRunsImported = false
+} = {}) => {
     const { config, runs } = simulationData;
 
-    const newRuns = [];
-    for (let i = 0; i < +config.amountOfNewRuns; i++) {
-        newRuns.push({
-            progress: 0,
-            states: {}
-        })
+    let newRuns = [];
+
+    if (!areRunsImported) {
+        for (let i = 0; i < +config.amountOfNewRuns; i++) {
+            newRuns.push({
+                progress: 0,
+                states: {}
+            })
+        }
+    } else {
+        newRuns = simulationData.runs
     }
 
     let runsContainerEl;
@@ -33,7 +43,7 @@ const runsInner = (parent, simulationData, renderVisualization) => {
         }
     }
 
-    if (simulationData.runs) {
+    if (simulationData.runs && !areRunsImported) {
         // Previous runs have been done
         amountOfPreviousRuns = runs.length;
 
