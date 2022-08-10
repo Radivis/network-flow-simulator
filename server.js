@@ -8,18 +8,12 @@ const { response } = require('express');
 
 const server = express();
 
-const paths = {
+const basePaths = {
     access: 'logs/access.json',
     error: 'logs/error.json'
 }
 
-// It would be better to read out the corresponding log file of the day, otherwise data gets lost whenever the server restarts!
-const logs = {
-    access: [],
-    error: []
-}
-
-const posts = [];
+const logs = {}
 
 // FUNCTIONS
 
@@ -35,34 +29,66 @@ const getYyyymmdd = date => {
     return year + '-' + month + '-' + day;
 }
 
-const log = (path, str) => {
-    let dateTime = new Date();
-    let date = getYyyymmdd(dateTime);
-    let time = dateTime.toLocaleTimeString();
+const currentPath = (basePath) => {
+    const date = getYyyymmdd(new Date());
 
     // include date into file path
-    const pathParts = path.split('.');
+    const pathParts = basePath.split('.');
+
+    return `${pathParts[0]}${date}.${pathParts[1]}`;
+}
+
+const log = ({
+    basePath,
+    message
+} = {}) => {
+    const time = new Date().toLocaleTimeString();
+    const path = currentPath(basePath)
 
     // Extract log type form filename
-    let logType = pathParts[0].split('/')[1];
-    path = `${pathParts[0]}${date}.${pathParts[1]}`;
+    const logType = basePath.split('.')[0].split('/')[1];
 
-    logs[logType].push({time, event: str});
+    logs[logType].push({ time, event: message });
 
-    fs.writeFileSync(path, JSON.stringify(logs[logType]), err => {
+    fs.writeFile(path, JSON.stringify(logs[logType]), err => {
         if (err) console.warn(err);
     });
 }
 
+const initLogs = () => {
+    // Initialize error logs
+    fs.readFile(currentPath(basePaths.error), 'utf8', (err, data) => {
+        if (err) {
+            // No error logs found, initialize them
+            logs.error = []
+            log({basePath: basePaths.error,
+                message: err})
+        }
+        else logs.error = JSON.parse(data)
+    })
+
+    // Initialize path logs
+    fs.readFile(currentPath(basePaths.access), 'utf8', (err, data) => {
+        if (err) {
+            log({basePath: basePaths.error,
+                message: err})
+            // Access logs not found, so initialize them
+            logs.access = []
+        }
+        else logs.access = JSON.parse(data)
+    })
+}
+
 // Log requested URL
 server.use((req, res, next) => {
-    log(paths.access, req.url)
+    log({basePath: basePaths.access,
+        message: req.url})
     next();
 })
 
 // Provide html - this probably blocks the get route below!
 server.use(express.static('public', {
-    extensions:['html']
+    extensions: ['html']
 }));
 
 // Needed for the server to provide data via JSON
@@ -84,12 +110,14 @@ server.use(express.json());
 
 // Log errors
 server.use((req, res, next) => {
-    log(paths.error, req.url)
+    log({basePath: basePaths.error,
+        message: req.url})
     next();
 })
 
 const init = () => {
-    const port = process.env.PORT || 8080;
+    initLogs()
+    const port = process.env.PORT || 80;
     server.listen(port, err => console.log(err || `Server running on Port ${port}`));
 }
 

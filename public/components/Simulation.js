@@ -47,9 +47,6 @@ const simulation = (parent, simulationData) => {
     const importDataCallback = simulationData => {
         importConfigDataCallback(simulationData.config)
         importRunsDataCallback(simulationData.runs)
-        // Rerender runs element with new simulation data
-        // TODO: Get this to work properly
-        // elements.runsOuter = runsOuter(elements.innerContainer, simulationData, elements.configInput, renderVisualization)
     }
 
     const exportDataCallback = () => {
