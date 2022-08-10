@@ -20,12 +20,6 @@ const configResourcesOuter = (parent, simulationData) => {
         parent: nonInputElements.outerContainer
     });
 
-    // nonInputElements.header = createElement({
-    //     type: 'h4',
-    //     parent: nonInputElements.outerContainer,
-    //     content: 'Resource Settings'
-    // });
-
     const { inputElementsArray, addResource } = configResourcesInner(nonInputElements.innerContainer, simulationData);
 
     // Have one resource added at initialization

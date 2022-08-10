@@ -3,7 +3,7 @@
 import { createElement } from "../util/dom.js";
 import inputCheckbox from "./inputCheckbox.js";
 import inputRange from "./inputRange.js";
-import RunCanvas from "./runCanvas.js";
+import RunCanvas from "./RunCanvas.js";
 
 
 const visualization = (parent, runData, configData) => {

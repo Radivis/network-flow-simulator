@@ -2,7 +2,6 @@
 
 import { createElement } from '../util/dom.js';
 import inputCheckbox from './inputCheckbox.js';
-import inputRange from './inputRange.js';
 
 const configRules = (parent) => {
     // Collect input fields in a separate object, so that they can be accessed more easily
