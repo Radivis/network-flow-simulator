@@ -4,16 +4,13 @@
 
 const express = require('express');
 const fs = require('fs');
-const { response } = require('express');
 
 const server = express();
 
 const basePaths = {
-    access: 'logs/access.json',
-    error: 'logs/error.json'
+    access: 'logs/access.txt',
+    error: 'logs/error.txt'
 }
-
-const logs = {}
 
 // FUNCTIONS
 
@@ -48,35 +45,9 @@ const log = ({
     // Extract log type form filename
     const logType = basePath.split('.')[0].split('/')[1];
 
-    logs[logType].push({ time, event: message });
-
-    fs.writeFile(path, JSON.stringify(logs[logType]), err => {
+    fs.appendFile(path, `${time}: ${message}`, err => {
         if (err) console.warn(err);
     });
-}
-
-const initLogs = () => {
-    // Initialize error logs
-    fs.readFile(currentPath(basePaths.error), 'utf8', (err, data) => {
-        if (err) {
-            // No error logs found, initialize them
-            logs.error = []
-            log({basePath: basePaths.error,
-                message: err})
-        }
-        else logs.error = JSON.parse(data)
-    })
-
-    // Initialize path logs
-    fs.readFile(currentPath(basePaths.access), 'utf8', (err, data) => {
-        if (err) {
-            log({basePath: basePaths.error,
-                message: err})
-            // Access logs not found, so initialize them
-            logs.access = []
-        }
-        else logs.access = JSON.parse(data)
-    })
 }
 
 // Log requested URL
@@ -116,7 +87,6 @@ server.use((req, res, next) => {
 })
 
 const init = () => {
-    initLogs()
     const port = process.env.PORT || 80;
     server.listen(port, err => console.log(err || `Server running on Port ${port}`));
 }
